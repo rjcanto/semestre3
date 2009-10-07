@@ -132,3 +132,99 @@ Pessoalmente não gosto desta implementação.
 		}		
 		return true;
 	}
+/*
+    Gosto mais desta, ocorreu-me antes de adormecer.... :)
+*/
+    /**
+     *Retorna a soma de todos os valores do intervalo l->r
+     */         
+	public static int getSubArraySum(int[] v, int l, int r){
+		int value=0;
+  		for (int idx=l;idx<=r;idx++)
+			value+=v[idx];
+  		return value;
+	}
+	
+	/**
+	 *Verifica se a soma acumulativa de valores chega a ser maior que max.
+	 */
+     public static boolean isMaxSum(int[]v,int l,int r,int i, int max){
+		int count=0;
+		for (int jdx=l;jdx<=r;jdx++){
+			count+=v[jdx];
+			if (jdx>=i && count > max)
+				return false;
+		}
+		return true;
+	}
+    
+    /**
+     *Esta é a implementação alternativa ao exercicio 3, utilizando dois 
+     *procedimentos auxiliares.
+     */         
+    public static boolean isMaximumSubArrayGivenIndex(int[] v, int l, int r, int i){
+	   /*
+       Implementação alternativa.	
+       IntTriple arr=MaximumSubArrayGivenIndex(v, l, r, i);
+	   return (arr.getLeft() == l && arr.getRight()== r);
+       */
+			
+		int value=getSubArraySum(v, l, r);
+		for (int idx=l+1;idx<=i;idx++){
+			if (!isMaxSum(v, l, r, i, value)) return false;
+		}
+		return true;
+	}
+    
+/**
+    4. Realize o metodo estatico
+    public static IntTriple getMaximumSubArrayGivenIndex(int[] v, int i)
+    que retorna o triplo de inteiros (l; r; s) tal que o resultado da avaliaçao de isMaximumSubArrayGivenIndex(v,l,r,i)
+    seja true e s = sum(l,r,v[i]);
+    O custo assimptotico deve ser O(N), onde N é a dimensão do array.
+  */
+  
+  	public static IntTriple MaximumSubArrayGivenIndex(int[] v, int l, int r, int i){
+		int count=0, maxValue=0,left=l,right=r;
+		
+		for (int idx=l;idx<=i;idx++){
+			count=0;
+			for (int jdx=idx;jdx<=r;jdx++){
+				count+=v[jdx];
+				if (jdx>=i && count > maxValue){
+					maxValue=count;
+					left=idx;
+					right=jdx;
+				}
+			}
+		}
+		return new IntTriple(left,right,maxValue);
+	}
+    
+    public static IntTriple getMaximumSubArrayGivenIndex(int[] v, int i){
+		return MaximumSubArrayGivenIndex(v, 0, v.length-1, i);
+	}
+    
+    
+    
+    
+class IntTriple{
+	private int left;
+	private int right;
+	private int sum;
+	public IntTriple(int l, int r, int s){
+		left=l;
+		right=r;
+		sum=s;
+	}
+	public int getLeft(){
+		return left;
+	}
+	public int getRight(){
+		return right;
+	}
+	public int getSum(){
+		return sum;
+	}
+}    
+            	
