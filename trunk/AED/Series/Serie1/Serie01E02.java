@@ -42,9 +42,9 @@ public class Serie01E02 {
 		int mid=(l + r) / 2;
 		int val;
 		if (v[mid] > a)
-			val=getFirstOccurrence(v, l,mid - 1, a);
+			val=getLastOccurrence(v, l,mid - 1, a);
 		else 
-			val=getFirstOccurrence(v, mid + 1,r, a);			
+			val=getLastOccurrence(v, mid + 1,r, a);			
 		if(val==-1 && v[mid] == a ) return mid;
 	return val;
 	}
