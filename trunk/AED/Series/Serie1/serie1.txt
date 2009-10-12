@@ -1,0 +1,230 @@
+/*
+1. Realize o método estático
+public static int removeOdd(int[] v, int count);
+Este método retira os inteiros ímpares da sequência representada pelos primeiros count inteiros do array v. A
+sequência resultante fica contida de forma contígua nas primeiras posições do array v. O valor retornado pelo
+método é a dimensão da sequência resultante.
+*/
+
+  /**
+   *Solução 1:
+   *Remove os inteiros nos "count" primeiros termos e retorna o numero de elementos
+   *que ficaram nos "dim" primeiras posições.
+   * 
+   *Trabalha no Dominío 0->count.   
+   */ 
+
+    	public static int removeOdd(int[] v, int count){
+    		int dim=0;
+    		for (int idx=0;idx<count;idx++)
+    	        if (v[idx]%2 == 0) v[dim++]=v[idx];
+    		return dim;
+    	}
+
+  /**
+   *Solução 2:
+   *Remove os inteiros nos "count" primeiros termos e retorna o numero de elementos
+   *validos no vector "v".
+   *Trabalha no Dominio 0->tamanho do array.
+   *As chavetas no if (idx<count) são necessários para o segundo "if" não assumir
+   *que o else lhe diz respeito.            
+   */ 
+	public static int removeOdd(int[] v, int count){
+		int dim=0;
+		for (int idx=0;idx<v.length;idx++){
+			if (idx<count){
+				if (v[idx]%2 == 0) v[dim++]=v[idx];
+			}else{
+				v[dim++]=v[idx];
+			}
+		}
+		return dim;
+	}
+/*
+2. Realize o metodo estatico
+public int countEqualTo(int[] v, int l, int r, int a)
+que retorna o numero de ocorrencias do inteiro a no subarray(v; l; r), que esta ordenado de forma crescente. O
+custo assimptotico deve ser O(logN), onde N e a dimensão do subarray.
+Tenha em consideração que o numero de ocorrencias pertence a O(N).
+*/
+
+    /**
+     *Solução 1:
+     *
+     */              
+    
+        /**
+         *Método auxiliar que retorna o indicie da primeira ocorrência de 'a', ou
+         *-1 caso não haja nenhuma ocorrencia.
+         */                          
+    	public static int getFirstOccurrence(int[] v, int l, int r, int a){
+    		int mid=0;
+    		int val=-1;
+    		while(l<r){
+    			mid = (l+r)/2;
+    			if (v[mid] < a){
+    				l=mid+1;
+    				if (v[l] == a) val=l;
+    			}else{
+    				r=mid-1;
+    				if (v[r] == a)val=r;
+    			}
+    		}
+    		return val;
+    	}
+        /**
+         *Método que retorna o numero de ocorrencias do valor 'a', caso haja.
+         *Utiliza o metodo auxiliar  getFirstOccurrence(...).        
+         */                 
+    	public static int countEqualTo(int[] v, int l, int r, int a){
+    		int count=0;
+    		int first=getFirstOccurrence(v, l, r, a);
+    		if (first == -1 ) return count;
+    		while (first<=r && v[first++] == a  ){
+    			count++;
+    		}
+    		return count;
+    	}
+/*
+3. Realize o metodo estatico
+public static boolean isMaximumSubArrayGivenIndex(int[] v, int l, int r, int i)
+que retorna true se e são se l <= i <= r e a soma dos elementos do subarray (v; l; r) tiver o maior valor possivel
+para a soma de qualquer subarray de v contendo o indice i.
+
+
+Pessoalmente não gosto desta implementação.
+*/
+
+
+
+
+	public static boolean isMaximumSubArrayGivenIndex(int[] v, int l, int r, int i){
+		int value=0;
+		int count=0;
+		
+		if (l>r || i>r || i<l) return false;
+		
+		/*ciclo com dois propositos:
+		 * 1- calcular o valor total da soma do conteudo dos indicies
+		 * 2- excluir essa hipotese na verificação de todas as outras.
+		 * */
+		for (int idx= l;idx<=r;idx++)
+				value+=v[idx];
+		/*
+		 *Ciclo de Hipoteses à esquerda 
+		 */
+		for (int idx=l+1;idx<=i;idx++){
+			count=0;
+			for (int jdx=idx;jdx<=r;jdx++){
+				count+=v[jdx];
+			}
+			if (count > value) return false;
+		}
+		/*
+		 *Ciclo de Hipoteses à direita 
+		 */
+		for (int idx=r;idx>=i;idx--){
+			count=0;
+			for (int jdx=idx;jdx>=l;jdx--){
+				count+=v[jdx];
+			}
+			if (count > value) return false;
+		}		
+		return true;
+	}
+/*
+    Gosto mais desta, ocorreu-me antes de adormecer.... :)
+*/
+    /**
+     *Retorna a soma de todos os valores do intervalo l->r
+     */         
+	public static int getSubArraySum(int[] v, int l, int r){
+		int value=0;
+  		for (int idx=l;idx<=r;idx++)
+			value+=v[idx];
+  		return value;
+	}
+	
+	/**
+	 *Verifica se a soma acumulativa de valores chega a ser maior que max.
+	 */
+     public static boolean isMaxSum(int[]v,int l,int r,int i, int max){
+		int count=0;
+		for (int jdx=l;jdx<=r;jdx++){
+			count+=v[jdx];
+			if (jdx>=i && count > max)
+				return false;
+		}
+		return true;
+	}
+    
+    /**
+     *Esta é a implementação alternativa ao exercicio 3, utilizando dois 
+     *procedimentos auxiliares.
+     */         
+    public static boolean isMaximumSubArrayGivenIndex(int[] v, int l, int r, int i){
+	   /*
+       Implementação alternativa.	
+       IntTriple arr=MaximumSubArrayGivenIndex(v, l, r, i);
+	   return (arr.getLeft() == l && arr.getRight()== r);
+       */
+			
+		int value=getSubArraySum(v, l, r);
+		for (int idx=l+1;idx<=i;idx++){
+			if (!isMaxSum(v, l, r, i, value)) return false;
+		}
+		return true;
+	}
+    
+/**
+    4. Realize o metodo estatico
+    public static IntTriple getMaximumSubArrayGivenIndex(int[] v, int i)
+    que retorna o triplo de inteiros (l; r; s) tal que o resultado da avaliaçao de isMaximumSubArrayGivenIndex(v,l,r,i)
+    seja true e s = sum(l,r,v[i]);
+    O custo assimptotico deve ser O(N), onde N é a dimensão do array.
+  */
+  
+  	public static IntTriple MaximumSubArrayGivenIndex(int[] v, int l, int r, int i){
+		int count=0, maxValue=0,left=l,right=r;
+		
+		for (int idx=l;idx<=i;idx++){
+			count=0;
+			for (int jdx=idx;jdx<=r;jdx++){
+				count+=v[jdx];
+				if (jdx>=i && count > maxValue){
+					maxValue=count;
+					left=idx;
+					right=jdx;
+				}
+			}
+		}
+		return new IntTriple(left,right,maxValue);
+	}
+    
+    public static IntTriple getMaximumSubArrayGivenIndex(int[] v, int i){
+		return MaximumSubArrayGivenIndex(v, 0, v.length-1, i);
+	}
+    
+    
+    
+    
+class IntTriple{
+	private int left;
+	private int right;
+	private int sum;
+	public IntTriple(int l, int r, int s){
+		left=l;
+		right=r;
+		sum=s;
+	}
+	public int getLeft(){
+		return left;
+	}
+	public int getRight(){
+		return right;
+	}
+	public int getSum(){
+		return sum;
+	}
+}    
+            	
