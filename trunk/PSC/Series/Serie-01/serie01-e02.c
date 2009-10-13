@@ -37,7 +37,7 @@ char * xstrstr(char * str1, const char * str2){
 	for (;*(str1 +i)!=0;++i){
 		if (*(str1 +i) == *(str2 +j)){
 			j++;
-			if (*(str2+j) == 0) return str1;
+			if (*(str2+j) == 0) return str1+i-j+1;
 		}else{
 			i=i-j;
 			j=0;
@@ -65,15 +65,17 @@ char * nextLine(){
 }
 
 void readlines(const char * search){
-	char * ln;
+	char * ln ; 
+	char * index ;
 	int idx=0;
 	
 	do{ 
 		ln = nextLine();
 		++idx;
 		if (ln != NULL){
-			if (xstrstr(ln,search) != NULL){
-				printf("[%d] - %s\n",idx,ln);
+			index = xstrstr(ln,search) ; 
+			if (index != NULL){
+				printf("[%d] - %s\n",idx,index);
 			}
 		}
 	}while(ln != NULL);
