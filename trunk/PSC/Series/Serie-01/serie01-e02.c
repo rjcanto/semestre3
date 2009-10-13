@@ -1,3 +1,31 @@
+/**
+ * Primeira série de exercícios - Inverno de 2009/10
+ * Grupo 1:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
+ * 
+ * Exercicio 2:
+ * São utilizadas três funções:
+ * -> readlines(const char * search)
+ * 	  Função que processa os dados de STDIN. Enquanto houver linhas 
+ * chama a função nextline(), obtem a linha e verifica a string a 
+ * encontrar através da função xstrstr().
+ * -> nextLine()
+ * 	  Função que lê do STDIN e forma a frase a ser retornada. 
+ * -> xstrstr(char * str1, const char * str2)
+ * 	  Função que verifica se str2 passada no argumento se encontra na str1.
+ *  
+ * Estratégia de resolução: 
+ * -> Partiu-se o problema em três partes.
+ * -> Uma parte que gere o input recebido, a comparação da string e 
+ * colocação no ecrâ.
+ * -> Uma parte que obtem a linha a ser comparada
+ * -> Uma parte que verifica se a string existe ou não.
+ * -> Como controlo verifica-se se existe palavra a pesquisar na linha 
+ * de comandos.
+ */ 
+
 #include <stdio.h>
 
 #define MAX_LEN 255
@@ -56,6 +84,6 @@ int main (int argc, char *argv[]){
 	if (argc>1)
 		readlines(argv[1]);
 	else
-		puts("Need at least one argument!");
+		puts("Need at least one argument to be searched!");
 return 0;	 
 }
