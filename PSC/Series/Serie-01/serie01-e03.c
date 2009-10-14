@@ -59,9 +59,7 @@ void addTurma() {
 		turmatmp[i]=c;
 	}
 	turmatmp[i]=0;	
-	printf("%s \n", turmatmp);
 	grp = getchar();
-	printf("%c \n", grp);
 	
 	for (i=0; i<idxT; ++i){
 		if (turmas[i].grpt==grp){
@@ -106,7 +104,6 @@ void addReserva(){
 	reservas[idxR++].pTurma = findTurma(turmatmp);	/*validar no caso de nao encontrar a turma*/
 }
 
-
 void processFile(){
 	int c;
 
@@ -128,28 +125,87 @@ void processFile(){
 	}
 }
 
-void printTurmaDetails(InfoTurma * t){
-	/*printf("%s \n", * t.turma);*/
+void listU(char * filter){
+	int i;
+	for (i=0; i<idxR; ++i){
+		if (strcmp((*reservas[i].pTurma).unCurr,filter) == 0)
+			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).turma);
+	}	
+}
 
+void listD(char * filter){
+	int i;
+	for (i=0; i<idxR; ++i){
+		if (strcmp((*reservas[i].pTurma).docente,filter) == 0)
+			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);
+	}	
+}
+
+void listG(char * filter){
+	int i;
+	for (i=0; i<idxR; ++i){
+		if ((*reservas[i].pTurma).grpt == (*filter))
+			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);		
+	}	
+}
+
+void processArgs(char * type, char * filter){
+
+	switch (*type) {
+		case 'U':		/*filtrar por unidade curricular*/
+		case 'u':
+			printf("Lista de alunos da Unidade Curricular: %s \n",filter); 
+			listU(filter);
+		break;
+		case 'D':		/*filtrar por Docente*/
+		case 'd':
+			printf("Lista de alunos do Docente: %s \n",filter); 
+			listD(filter);
+		break;
+		case 'G':		/*filtrar por grupo horario*/
+		case 'g':
+			printf("Lista de alunos das turmas do grupo: %s \n",filter); 
+			listG(filter);
+		break;
+		default:
+			printf("Argumento <%s> inválido. Usar H (ou h) para ajuda.\n",type);
+	}	
 
 }
 
+void showHelp(){
+	puts("Lista de argumentos:");
+	puts("serie01-e03 <tipo_lista> [filtro] < <ficheiro_a_importar>");
+	puts("<tipo_lista>:");	
+	puts("	h ou H - mostra este ecrã");
+	puts("	u ou U - lista de alunos por unidade curricular.");
+	puts("	d ou D - lista de alunos por Docentes.");
+	puts("	d ou D - lista de alunos de turmas que partilham o mesmo grupo horário.");
+	puts("[filtro]:");
+	puts("	unidade, docente ou grupo horário a filtrar ou vazio para listar todas as opções.");
+	puts("<ficheiro_a_importar>:");
+	puts("	nome do ficheiro com os dados a processar.");
+}
 
 int main(int argc, char *argv[]){
-	int i;
+/*	int i;*/
 
-	if (argc>0)
-		processFile();
-		/*printList(argv[1], argv[2]);*/
-	else
+	if (argc<2){
 		puts("Need at least one argument to be searched!");
-		
-	for (i=0; i<idxT;++i)
+		puts("Use H or h as first argument for details.");
+	} else {
+		if (*argv[1] == 'h' || *argv[1] == 'H') {
+			showHelp();
+			return 0;
+		}
+		processFile();
+		processArgs(argv[1], argv[2]);
+	}
+	
+/*	for (i=0; i<idxT;++i)
 		printf("%s - %s - %s - %c \n",turmas[i].docente,turmas[i].unCurr,turmas[i].turma,turmas[i].grpt);
 	for (i=0; i<idxR;++i){
-		printf("%d - %d ", reservas[i].numAluno,reservas[i].pTurma);
-		printTurmaDetails(reservas[i].pTurma);
-	}
-return 0;	 
-
+		printf("%d - %s  \n", reservas[i].numAluno,(*reservas[i].pTurma).turma);
+	}*/
+return 0;
 }
