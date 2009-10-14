@@ -127,26 +127,38 @@ void processFile(){
 
 void listU(char * filter){
 	int i;
-	for (i=0; i<idxR; ++i){
-		if (strcmp((*reservas[i].pTurma).unCurr,filter) == 0)
-			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).turma);
-	}	
+	
+	if (filter == NULL)
+		for (i=0; i<idxT; ++i)
+			printf("%s\n",turmas[i].unCurr);
+	else
+		for (i=0; i<idxR; ++i)
+			if (strcmp((*reservas[i].pTurma).unCurr,filter) == 0)
+				printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).turma);
 }
 
 void listD(char * filter){
 	int i;
-	for (i=0; i<idxR; ++i){
-		if (strcmp((*reservas[i].pTurma).docente,filter) == 0)
-			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);
-	}	
+	
+	if (filter == NULL)
+		for (i=0; i<idxT; ++i)
+			printf("%s \n",turmas[i].docente);
+	else
+		for (i=0; i<idxR; ++i)
+			if (strcmp((*reservas[i].pTurma).docente,filter) == 0)
+				printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);	
 }
 
 void listG(char * filter){
 	int i;
-	for (i=0; i<idxR; ++i){
-		if ((*reservas[i].pTurma).grpt == (*filter))
-			printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);		
-	}	
+	
+	if (filter == NULL)
+		for (i=0; i<idxT; ++i)
+			printf("%c \n",turmas[i].grpt);
+	else
+		for (i=0; i<idxR; ++i)
+			if ((*reservas[i].pTurma).grpt == (*filter))
+				printf("%d - %s\n", reservas[i].numAluno, (*reservas[i].pTurma).unCurr);			
 }
 
 void processArgs(char * type, char * filter){
