@@ -75,7 +75,7 @@ void readlines(const char * search){
 		if (ln != NULL){
 			index = xstrstr(ln,search) ; 
 			if (index != NULL){
-				printf("[%d] - %s\n",idx,index);
+				printf("[%d]: %s\n",idx,ln);
 			}
 		}
 	}while(ln != NULL);
