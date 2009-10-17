@@ -1,8 +1,12 @@
 package serie1;
 /**
- * @author Nuno Cancelo
- * 
- */
+ * Primeira série de exercícios - Inverno de 2009/10
+ * Grupo 1:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
+ */ 
+
 public class Serie01E02 {
 
 	/*
@@ -55,7 +59,7 @@ public class Serie01E02 {
 	public static int countEqualTo(int[] v, int l, int r, int a) {
 		int left=0,right=0;
 		if ((left=getFirstOccurrence(v, l, r, a))!=-1){
-			right=getLastOccurrence(v, l, r, a);
+			right=getLastOccurrence(v, left, r, a);
 			return (right- left +1);
 		}
 		return -1;
@@ -64,12 +68,8 @@ public class Serie01E02 {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		int[] var={0,1,2,2,2,2,2,3,4,5,6,7,8,9};
-		int x=getLastOccurrence(var, 0, 13, 9);
-		System.out.println("var /> "+ x);
-
+	public static void main (String args[]) {		
+		
 	}
 
 }

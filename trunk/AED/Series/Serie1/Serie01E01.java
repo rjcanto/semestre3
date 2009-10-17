@@ -1,3 +1,11 @@
+package serie1;
+/**
+ * Primeira série de exercícios - Inverno de 2009/10
+ * Grupo 1:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
+ */
 
 public class Serie01E01 {
 /*
