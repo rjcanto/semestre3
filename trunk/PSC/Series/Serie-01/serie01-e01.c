@@ -33,12 +33,16 @@ int minsize(long val) {
 	int bits=0;
 	int i=0;
 	int mask=0x01;
-	val=(signal==-1)?-1*val:val;
-	while(mask!=0){
-		++i;
-		if (mask&val)
-			bits=i;
-		mask<<=1;
+	if (val==0) return -1;
+
+	if(signal==-1)++i;
+			while(mask!=0){
+				++i;
+				if (!(mask&val)&&(signal==-1))
+					bits=i;
+				else if ((mask&val)&&(signal!=-1))
+					bits=i;
+			mask<<=1;
 	}
 	return signal*((bits%CHAR_BIT)?bits/CHAR_BIT + 1:bits/CHAR_BIT);
 }
@@ -54,14 +58,41 @@ long getlong(){
 	}
 	return signal*number;
 }
+void printRange(long val){
 
+	if (val>= CHAR_MIN && val <= CHAR_MAX)
+		puts("O valor pode ser colocado num signed char!");
+	
+	if (val>= 0 && val <= UCHAR_MAX)
+		puts("O valor pode ser colocado num unsigned char!");
+
+	if (val>= SHRT_MIN && val <= SHRT_MAX)
+		puts("O valor pode ser colocado num signed short!");
+
+	if (val>= 0 && val <= USHRT_MAX)
+		puts("O valor pode ser colocado num unsigned short!");
+
+	if (val>= INT_MIN && val <= INT_MAX)
+		puts("O valor pode ser colocado num signed int!");
+
+	if (val>= 0 && val <= UINT_MAX)
+		puts("O valor pode ser colocado num unsigned int!");
+
+	if (val>= LONG_MIN && val <= LONG_MAX)
+		puts("O valor pode ser colocado num signed long!");
+
+	if (val>= 0 && val <= ULONG_MAX)
+		puts("O valor pode ser colocado num unsigned long!");
+}
 int main() {
-	long val = 0 ;
+	long val = 0,val2=0 ;
 	printf("PSC Serie Exerc. 1\nFuncao MinSize\n");
 	for(;;) {
 		printf("Introduza numero inteiro: ") ;
 		val = getlong() ;
-		printf("Número de Bytes a guardar em %ld: %d\n", val, minsize(val));
+		val2=minsize(val);
+		printf("Número de Bytes a guardar em %ld: %ld\n", val, val2);
+		printRange(val);
 	}
 	return 0 ;
 }
