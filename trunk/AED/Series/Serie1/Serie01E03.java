@@ -1,6 +1,6 @@
-package serie1;
+package Serie1;
 /**
- * Primeira série de exercícios - Inverno de 2009/10
+ * Primeira sï¿½rie de exercï¿½cios - Inverno de 2009/10
  * Grupo 1:
  * -> 30896: Ricardo Canto
  * -> 31401: Nuno Cancelo
@@ -12,7 +12,7 @@ public class Serie01E03 {
 /*
 	3. Realize o metodo estatico
 	public static boolean isMaximumSubArrayGivenIndex(int[] v, int l, int r, int i)
-	que retorna true se e são se l <= i <= r e a soma dos elementos do subarray (v; l; r) tiver o maior valor possivel
+	que retorna true se e sï¿½o se l <= i <= r e a soma dos elementos do subarray (v; l; r) tiver o maior valor possivel
 	para a soma de qualquer subarray de v contendo o indice i.
 */	    
 	public static boolean isMaximumSubArrayGivenIndexLeft(int[] v, int l, int i) {
@@ -75,10 +75,10 @@ public class Serie01E03 {
 
 	public static boolean isMaximumSubArrayGivenIndexA2(int[] v, int l, int r,int i) {
 		/*
-		 *Objectos criados somente para tornar mais legível o código 
+		 *Objectos criados somente para tornar mais legï¿½vel o cï¿½digo 
 		 */
-		IntTriple ll=MaximunSubArrayIndexLeft(v, l, i);
-		IntTriple rr=MaximunSubArrayIndexRight(v, r, i);
+		IntTriple ll=MaximumSubArrayIndexLeft(v, l, i);
+		IntTriple rr=MaximumSubArrayIndexRight(v, r, i);
 		
 		return (ll.getLeft()==l && rr.getRight()==r);
 	}

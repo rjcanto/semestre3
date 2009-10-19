@@ -1,6 +1,6 @@
-package serie1;
+package Serie1;
 /**
- * Primeira série de exercícios - Inverno de 2009/10
+ * Primeira sï¿½rie de exercï¿½cios - Inverno de 2009/10
  * Grupo 1:
  * -> 30896: Ricardo Canto
  * -> 31401: Nuno Cancelo
@@ -11,9 +11,9 @@ public class Serie01E04 {
 	/**
 	 * 4. Realize o metodo estatico public static IntTriple
 	 * getMaximumSubArrayGivenIndex(int[] v, int i) que retorna o triplo de
-	 * inteiros (l; r; s) tal que o resultado da avaliaçao de
+	 * inteiros (l; r; s) tal que o resultado da avaliaï¿½ao de
 	 * isMaximumSubArrayGivenIndex(v,l,r,i) seja true e s = sum(l,r,v[i]); O
-	 * custo assimptotico deve ser O(N), onde N é a dimensão do array.
+	 * custo assimptotico deve ser O(N), onde N ï¿½ a dimensï¿½o do array.
 	 */
 	
 
@@ -29,7 +29,7 @@ public class Serie01E04 {
 				sum += v[idx];
 			}
 		}
-		return (new IntTriple(l_tmp,0,total));	
+		return (new IntTriple(l_tmp,i-1,total));
 	}
 
 	public static IntTriple MaximunSubArrayIndexRight(int[] v, int r, int i) {
@@ -45,7 +45,7 @@ public class Serie01E04 {
 			}
 			
 		}
-		return (new IntTriple(0,r_tmp,total));
+		return (new IntTriple(i+1,r_tmp,total));
 	}
 
 	public static IntTriple MaximumSubArrayGivenIndex(int[] v, int l, int r, int i) {
@@ -56,7 +56,7 @@ public class Serie01E04 {
 
 	public static IntTriple getMaximumSubArrayGivenIndex(int[] v, int i) {
 		IntTriple result=MaximumSubArrayGivenIndex(v, 0, v.length - 1, i);
-		return null;
+		return result;
 	}
 	public static void main (String args[]) {		
 		
