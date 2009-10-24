@@ -1,0 +1,36 @@
+%Geração de Nota Musical.
+%
+%Input:
+%   a=  Amplitude
+%   fs= Frequencia de Amostragem
+%   ph= Fase
+%
+%Output:
+%   nota: retorna a respectiva nota.
+%
+function [nota] = t1_nota(a,fi,sec,ph)
+    if (nargin ~= 4)
+        if (nargin == 3)
+            ph=0;
+        else    
+            fprintf('Numero de argumentos inválido.\n');
+            help t1_notas;
+            return;
+        end
+    end
+
+
+    %numero de segundos de cada nota.
+    %sec=1;
+    %Frequencia de Amostragem (em Hz), taxa equivalente do sinal de telefone
+    fs=8192;
+    %frequencia base de 261.63 hz, é a frequencia padrão da nota Dó num piano.
+    %
+    
+    n=1:1:fs*sec;
+    W=2*pi*(fi/fs);
+
+    %sinal a ser gerado
+    nota=a*cos(W * n  + ph);
+    wavplay(nota,fs);
+end
