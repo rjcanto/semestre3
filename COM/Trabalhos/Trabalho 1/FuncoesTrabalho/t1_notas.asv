@@ -1,0 +1,57 @@
+function [notas]=t1_notas(n)
+    amplitude=2;
+    frq=440;
+    phase=0;
+    for i=0:n
+        notas=t1_nota(amplitude,frq,0.5,phase);
+        frq=frq*power(2,1/12);
+    end
+    t1_nota(amplitude,frq*power(2,1/12),1,phase);
+    t1_nota(amplitude,frq*power(2,1/12),1,phase);
+    t1_nota(amplitude,frq*power(2,1/12),1,phase);
+    5,1 
+    6,1
+    6,1 
+    5,2 
+    4,1
+    4,1
+    3,1
+    3,1
+    2,1
+    2,1 
+    1,2 
+    5,1
+    5,1 
+    4,1
+    4,1 
+    3,1
+    3,1 
+    2,2 
+    5,1
+    5,1 
+    4,1
+    4,1 
+    3,1 
+    2,2
+    1,1
+    1,1
+    5,1
+    5,1 
+    6,1
+    6,1 
+    5,2 
+    4,1
+    4,1 
+    3,1
+    3,1 
+    2,1
+    2,1 
+    1,1
+    
+    
+
+    for i=0:n
+        notas=t1_nota(amplitude,frq,0.5,phase);
+        frq=frq*power(2,1/12);
+    end
+end
