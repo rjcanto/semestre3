@@ -18,7 +18,7 @@ function [s]= sintetizador(n)
             base_frq=0;
         end
         
-        s=t1_nota(2,base_frq,time);
-       wavplay(s,8192);
+        [s,fs]=t1_nota(2,base_frq,time);
+       sound(s,fs);
     end
 end
