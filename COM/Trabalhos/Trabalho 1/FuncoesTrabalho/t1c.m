@@ -11,14 +11,17 @@
 function [] = t1c()
     close all; 
     %recebe um sinal.
-    [signal,fs]=t1_nota(1,440,0.005);
+    [signal,fs]=t1_nota(2,440,1,pi/4);
     %efectuado um varrimento ao sinal
     t=0:0.001:0.01;
-    s_chirp=chirp(t,10);
+    s_chirp=chirp(t,fs);
     %efectuado a analisys do sinal anterior.
     figure
-    analysis(s_chirp,0);
-
+    analysis(s_chirp,fs);s
+    y=s_chirp*signal;
+    figure
+    analysis(y,fs);
+    
     %Gráficos Gerados:
     %Gráfico de Vector:
     %Verifica-se o desempenho do sinal ao longo do tempo.

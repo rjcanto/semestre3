@@ -6,18 +6,18 @@
 
 function [] = t1d()
     close all;
-    x=wavread('fala1.wav');
-    y=(1/3)*x + (1/3)*(x - 1) + (1/3)*(x - 2);
-    sound(y,11054);
+    [x,fs]=wavread('fala1.wav');
+    y=(1/3)*[x;0;0] + (1/3)*[0;x;0] + (1/3)*[0;0;x];
+    wavplay(y,fs);
     %reduzir a amplitude e adicionar o mesmo sinal com atraso
     %provoca distroção do sinal e perca de nitidez
     %
     %No grafico nota-se que existe uma componente DC no sinal.
     figure;
-    analysis(x,0);
+    analysis(x,fs);
 
     figure;
-    analysis(y,0);
+    analysis(y,fs);
 
     
 end
