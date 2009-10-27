@@ -46,14 +46,14 @@ int main() {
 	else
 		puts("Este sistema é Big Endian:");
 	
+	printf("0x%08x\n", number);
 	number=xend(number);
-	printf("%08x\n", number);
 
 	if(type == 0)
 		puts("Se fosse Big Endian ficaria:");
 	else
 		puts("Se fosse Little Endian ficaria:");
-	printf("%08x\n", number);
+	printf("0x%08x\n", number);
 
 	return 0 ;
 }
