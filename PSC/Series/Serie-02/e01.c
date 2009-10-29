@@ -37,6 +37,8 @@ int main() {
 		type=0;
 	else if (*(p + sizeof(int) - 1) == 1)
 		type=1;
+	else
+		puts("Sistema indeterminado...");
 
 	puts("Introduza um inteiro a 32 bits no seu formato hexadecimal:");
 	scanf("%x", &number);
