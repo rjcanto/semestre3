@@ -16,6 +16,57 @@ import java.util.ListIterator;
  */
 public class AedLinkedList<E> extends AbstractCollection<E>  implements List<E>, Deque<E>, Cloneable{
 
+    private class Node<E>{
+        Node next;
+        Node previous;
+        E element;
+        public Node(Node next, Node previous, E element){
+            this.next=next;
+            this.previous=previous;
+            this.element=element;
+        }
+    }
+
+    private class ListItr implements ListIterator{
+
+        public boolean hasNext() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public Object next() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public boolean hasPrevious() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public Object previous() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public int nextIndex() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public int previousIndex() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void set(Object e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void add(Object e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+
     @Override
     public Iterator<E> iterator() {
         throw new UnsupportedOperationException("Not supported yet.");
