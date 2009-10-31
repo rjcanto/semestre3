@@ -16,3 +16,13 @@ http://java.sun.com/javase/6/docs/api/java/util/LinkedList.html
 
 Iterables:
 http://jga.sourceforge.net/docs/javadoc/net/sf/jga/util/Iterables.html
+
+Bibliografia:
+http://www.faqs.org/docs/javap/c12/ex-12-4-answer.html
+http://java.sun.com/javase/6/docs/api/java/util/Iterator.html
+
+http://java.sun.com/javase/6/docs/api/java/io/BufferedReader.html
+http://java.sun.com/javase/6/docs/api/java/io/BufferedWriter.html
+http://java.sun.com/javase/6/docs/api/java/io/FileReader.html
+http://java.sun.com/javase/6/docs/api/java/io/FileWriter.html
+
