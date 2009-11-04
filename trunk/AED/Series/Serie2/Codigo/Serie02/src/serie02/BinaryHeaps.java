@@ -47,7 +47,7 @@ public class BinaryHeaps {
      * @return
      */
     public static int countMaxInMaxHeap(int[] v, int count){
-        return countMaxinHeap(v, 0, count,v[0])+1;
+        return countMaxinHeap(v, 0, count,v[0]);
     }
 
     public static int countMaxinHeap(int[] v, int i, int count ,int max){
@@ -55,11 +55,10 @@ public class BinaryHeaps {
         if (2*i+2>=count) return 0;
         if (v[i] != max) return 0;
         int total =0;
-        
-        if(v[2*i+1] == max) total+=countMaxinHeap(v, 2*i+1, count,max)+1;
-        if(v[2*i+2] == max) total+=countMaxinHeap(v, 2*i+2, count,max)+1;
+        if(v[2*i+1] == max) total+=countMaxinHeap(v, 2*i+1, count,max);
+        if(v[2*i+2] == max) total+=countMaxinHeap(v, 2*i+2, count,max);
         //System.out.println(i+"<->"+ (2*i+1) +"<->"+(2*i+2));
-        return total;
+        return total+1;
     }
     /**
      * Este método retorna a dimensão do maior sub-array de v, com início no
@@ -85,8 +84,8 @@ public class BinaryHeaps {
      * max-heap.
      */
     public static int checkMaxHeap(int[] v){
-        int lastParent=((v.length)-1)/2;
-        int[] parents=new int[lastParent+1];
+        int lastParent=((v.length-1)-1)/2;
+        int[] parents=new int[v.length];
        
 
         do {
@@ -99,8 +98,8 @@ public class BinaryHeaps {
             }
             --lastParent;
         }while(lastParent>=0);
-
-       return getMaxInMaxHeap(parents);
+        print(parents);
+       return getMaxInMaxHeap(parents, v.length);
     }
 
     /**
@@ -124,19 +123,25 @@ public class BinaryHeaps {
      * Contabiliza o numero de elementos que estão em max-heap, retornando o nu-
      * mero da maior subsequencia.
      */
-    public static int getMaxInMaxHeap(int[] v){
-        int max=0,tmp=0;
-
-        for (int i=0;i<v.length;++i){
+    public static int getMaxInMaxHeap(int[] v, int dim){
+        int max=0;
+        for (int i=0;i<dim;++i){
             if (v[i] == 1){
-                tmp++;
-            }else{
-                max=(tmp>max)?tmp:max;
-                tmp=0;
+                return getLen(v, i, dim);
             }
         }
-        return (tmp>max)?tmp:max;
+        return max;
     }
+
+
+    private static int getLen(int[] v, int i,int dim){
+        if (i>=dim) return 0;
+        int total=0;
+        total+= getLen(v, 2*i+1, dim);
+        total+= getLen(v, 2*i+2, dim);
+        return total+1;
+    }
+
     /**
      *
      * @param v
@@ -146,7 +151,6 @@ public class BinaryHeaps {
      * funcional em modo min-heap.
      */
     public static void setIsNotMaxHeap(int v[], int idx){
-
         while (idx>0){
             v[idx]=-1;
             idx=(idx-1)/2;
@@ -171,14 +175,15 @@ public class BinaryHeaps {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        int v[] ={16,14,10,2,7,9,3,11,4,5};
+        int v[] ={16,14,10,2,7,9,11,11,4,5};
         /*
          teste 1
          */
         printByDepth(v, v.length);
     
         /*teste 2*/
-       // System.out.println("\n"+countMaxInMaxHeap(v, v.length));
+        System.out.println("\n"+countMaxInMaxHeap(v, v.length));
+        /*teste 3*/
         System.out.println("\n>>>"+largestSubArrayThatIsAMaxHeap(v));
     }
 

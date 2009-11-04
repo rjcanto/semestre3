@@ -29,18 +29,29 @@ public class Iterables {
             public Iterator<E> iterator() {
                 return new Iterator<E>() {
                     private Iterator<E> i1 = iter1.iterator();
-                    private Iterator<E> i2 = iter2.iterator();
+                    private Iterator<E> i2 = null;
+                    E element =null;
                     public boolean hasNext() {
-                        if (!i1.hasNext() && !i2.hasNext()) {
-                            throw new NoSuchElementException();
+                        if (i1.hasNext()){
+                            element=i1.next();
+                            return true;
+                        }else{
+                            if(i2 == null)i2 = iter2.iterator();
+                            if (i2.hasNext()){
+                                element=i2.next();
+                                return true;
+                            }else{
+                                return false;
+                            }
                         }
-                        return (i1.hasNext()) ? true: i2.hasNext() ;
                     }
                    public E next() {
-                        if (!i1.hasNext() && !i2.hasNext()) {
+                        if (element == null) {
                             throw new NoSuchElementException();
                         }
-                        return (i1.hasNext()) ? i1.next() : i2.next();
+                        E e = element;
+                        element=null;
+                        return e;
                     }
                     public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
@@ -74,10 +85,9 @@ public class Iterables {
 
             public Iterator<E> iterator() {
                 return new Iterator<E>() {
-                    private E element;
+                    private E element=null;
                     private Iterator<E> it=iter.iterator();
                     public boolean hasNext() {
-
                         while (it.hasNext()){
                             if (pred.eval(element=it.next())) {
                                 return true;
@@ -87,10 +97,12 @@ public class Iterables {
                     }
 
                     public E next() {
-                        if (!hasNext()){
+                        if (element==null){
                             throw new NoSuchElementException();
                         }
-                        return element;
+                        E e=element;
+                        element=null;
+                        return e;
                     }
 
                     public void remove() {
