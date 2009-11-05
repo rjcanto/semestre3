@@ -285,10 +285,11 @@ public class ShortestPath {
     }
 
     private void quicksort(int left, int right) {
-        if (left > right){
+        if (right > left){
             int idx = partition(left, right);
-            quicksort(left, idx - 1);
             quicksort(idx + 1, right);
+            quicksort(left, idx - 1);
+            
         }
     }
 
@@ -299,13 +300,13 @@ public class ShortestPath {
         i = left - 1;
         j = right;
         for (;;) {
-            while (less(pna[++i], v));
+            while (less(pna[++i], v) && i <right);
 
-            while (less(v, pna[--j])) {
+            while (less(v, pna[--j]) && j > left);
                 if (j == left) {
                     break;
                 }
-            }
+            
             if (i >= j) {
                 break;
             }
@@ -326,9 +327,9 @@ public class ShortestPath {
     }
 
     public static void main(String[] args) {
-        ShortestPath sp = new ShortestPath(new File(FILENAME), new orderPathByWeight());
+        ShortestPath sp = new ShortestPath(new File(FILENAME), new orderPathByHead());
         sp.separeChunks();
-        //sp.merge();
+        sp.merge();
     }
 
     private static class PathNode implements Comparable<PathNode> {
