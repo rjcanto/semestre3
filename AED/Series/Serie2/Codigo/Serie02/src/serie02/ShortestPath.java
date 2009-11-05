@@ -7,13 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.StringTokenizer;
 
 /**
  * Grupo:
@@ -21,8 +19,6 @@ import java.util.StringTokenizer;
  * -> 31401: Nuno Cancelo
  * -> 33595: Nuno Sousa
  */
-
-
 /**
  *
  * Todo List:
@@ -32,53 +28,61 @@ import java.util.StringTokenizer;
  */
 public class ShortestPath {
 
-    private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
+    //private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
+    private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
     private static final String FILENAME = PATH + "USA-road-d.NY.gr";
-    private final String MERGE_FILENAME= FILENAME + ".merged";
-    private final String SORTED_FILENAME= FILENAME + ".sorted";
+    private final String MERGE_FILENAME = FILENAME + ".merged";
+    private final String SORTED_FILENAME = FILENAME + ".sorted";
     private final int MAX_LINES = 100000;
     private File filename;
     private PathNode[] pna;
     private Comparator cmp;
     private int nbrFiles = 0;
-
+    private int maxLines;
 
     public ShortestPath(File filename, Comparator cmp) {
         this.filename = filename;
         this.cmp = cmp;
-        initValues();
+        pna = null;
+        //initValues();
     }
 
     public void initValues() {
         pna = null;
-        pna = new PathNode[MAX_LINES];
+        pna = new PathNode[maxLines];
     }
 
     public int separeChunks() {
         BufferedReader fr = null;
-        StringTokenizer element = null;
+        String[] element = null;
         String type = null;
         String line = null;
         int rowNbr = 0;
-        pna = new PathNode[MAX_LINES];
-        try {
-           fr = new BufferedReader(new FileReader(filename));
-            while ((line = fr.readLine()) != null) {
-                element = new StringTokenizer(line, " ");
-                type = (String) element.nextElement();
 
-                if (type.equals("a") && (rowNbr < MAX_LINES)) {
-                    pna[rowNbr++] = setPathNode(element);
-                } else if (rowNbr == MAX_LINES) {
-                    mySort(pna, rowNbr, cmp);
+        try {
+            fr = new BufferedReader(new FileReader(filename));
+            while ((line = fr.readLine()) != null) {
+                element = line.split(" ");
+                type = element[0];
+                if (type.equals("c")) {
+                    continue;
+                }
+                if (type.equals("p")) {
+                    maxLines = Integer.parseInt(element[3]);
+                    maxLines = (maxLines > MAX_LINES) ? MAX_LINES : maxLines;
+                    pna = new PathNode[maxLines];
+                } else if (type.equals("a") && (rowNbr < maxLines)) {
+                    pna[rowNbr++] = setPathNode(element[1], element[2], element[3]);
+                } else if (rowNbr == maxLines) {
+                    mySort(rowNbr - 1);
                     write(pna, rowNbr, filename + "." + nbrFiles++, false);
                     initValues();
                     rowNbr = 0;
-                    pna[rowNbr++] = setPathNode(element);
+                    pna[rowNbr++] = setPathNode(element[1], element[2], element[3]);
                 }
             }
-            if (rowNbr > 0 && rowNbr < MAX_LINES) {
-                mySort(pna, rowNbr, cmp);
+            if (rowNbr > 0 && rowNbr < maxLines) {
+                mySort(rowNbr - 1);
                 write(pna, rowNbr, filename + "." + nbrFiles++, false);
                 initValues();
                 rowNbr = 0;
@@ -97,28 +101,29 @@ public class ShortestPath {
         return nbrFiles;
     }
 
-    private PathNode setPathNode(StringTokenizer element) {
-        int tail = Integer.parseInt((String) element.nextElement());
-        int head = Integer.parseInt((String) element.nextElement());
-        int weight = Integer.parseInt((String) element.nextElement());
+    private PathNode setPathNode(String element1, String element2, String element3) {
+        int tail = Integer.parseInt(element1);
+        int head = Integer.parseInt(element2);
+        int weight = Integer.parseInt(element3);
         PathNode pn = new PathNode('a', tail, head, weight);
         return pn;
     }
 
-    public void merge(){
-        int files2Decrease=nbrFiles-1;
-        int idx=0;
-        while(files2Decrease >0){
-            mergeTwoChunks( filename + "." + idx++,  filename + "." + files2Decrease--);
+    public void merge() {
+        int files2Decrease = nbrFiles - 1;
+        int idx = 0;
+        while (files2Decrease > 0) {
+            mergeTwoChunks(filename + "." + idx++, filename + "." + files2Decrease--);
 
-            if (idx >= files2Decrease){
-                idx=0;
+            if (idx >= files2Decrease) {
+                idx = 0;
             }
         }
-        File f1 =new File(filename + "." + idx);
-        File f2=new File(SORTED_FILENAME);
+        File f1 = new File(filename + "." + idx);
+        File f2 = new File(SORTED_FILENAME);
         f1.renameTo(f2);
     }
+
     /**
      *
      * @param file1
@@ -127,8 +132,8 @@ public class ShortestPath {
      * O ficheiro agregado ordenado está no nome do primeiro argumento passado.
      */
     public void mergeTwoChunks(String file1, String file2) {
-        File f1=new File(file1);
-        File f2=new File(file2);
+        File f1 = new File(file1);
+        File f2 = new File(file2);
         BufferedReader fr1 = null;
         BufferedReader fr2 = null;
 
@@ -139,7 +144,7 @@ public class ShortestPath {
             int idx = 0;
             initValues();
             while (fileLineIter.hasNext()) {
-                if (idx < MAX_LINES) {
+                if (idx < maxLines) {
                     pna[idx++] = (PathNode) fileLineIter.next();
                 } else {
                     write(pna, idx, MERGE_FILENAME, true);
@@ -148,7 +153,7 @@ public class ShortestPath {
                     pna[idx++] = (PathNode) fileLineIter.next();
                 }
             }
-                write(pna, idx,MERGE_FILENAME, true);
+            write(pna, idx, MERGE_FILENAME, true);
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
@@ -159,7 +164,7 @@ public class ShortestPath {
             try {
                 fr1.close();
                 fr2.close();
-                File f3=new File(MERGE_FILENAME);
+                File f3 = new File(MERGE_FILENAME);
                 f1.delete();
                 f2.delete();
                 f3.renameTo(f1);
@@ -172,8 +177,7 @@ public class ShortestPath {
     public <PathNode> Iterator<PathNode> fileLineIterator(final BufferedReader br1, final BufferedReader br2, final Comparator cmp) {
         return new Iterator<PathNode>() {
 
-            StringTokenizer element = null;
-            String type = null;
+            String[] element = null;
             String line = null;
             PathNode node = null;
             PathNode tmpNode1 = null;
@@ -191,9 +195,8 @@ public class ShortestPath {
                         try {
                             line = br1.readLine();
                             if (line != null) {
-                                element = new StringTokenizer(line, " ");
-                                type = (String) element.nextElement();
-                                tmpNode1 = (PathNode) setPathNode(element);
+                                element = line.split(" ");
+                                tmpNode1 = (PathNode) setPathNode(element[1], element[2], element[3]);
                             } else {
                                 file1End = true;
                             }
@@ -209,9 +212,8 @@ public class ShortestPath {
                         try {
                             line = br2.readLine();
                             if (line != null) {
-                                element = new StringTokenizer(line, " ");
-                                type = (String) element.nextElement();
-                                tmpNode2 = (PathNode) setPathNode(element);
+                                element = line.split(" ");
+                                tmpNode2 = (PathNode) setPathNode(element[1], element[2], element[3]);
                             } else {
                                 file2End = true;
                             }
@@ -277,20 +279,92 @@ public class ShortestPath {
         fw.close();
     }
 
-    private void mySort(PathNode[] p, int len, Comparator<PathNode> cmp) {
-        Arrays.sort(p, 0, len, cmp);
+    private void mySort(int len) {
+        //Arrays.sort(p, 0, len, cmp);
+        quicksort(0, len);
+    }
+
+    private void quicksort(int left, int right) {
+        if (left > right){
+            int idx = partition(left, right);
+            quicksort(left, idx - 1);
+            quicksort(idx + 1, right);
+        }
+    }
+
+    private int partition(int left, int right) {
+
+        int i, j;//i da esquerda para a direita, j ao contrário
+        PathNode v= pna[right];
+        i = left - 1;
+        j = right;
+        for (;;) {
+            while (less(pna[++i], v));
+
+            while (less(v, pna[--j])) {
+                if (j == left) {
+                    break;
+                }
+            }
+            if (i >= j) {
+                break;
+            }
+            exch(i, j);
+        }
+        exch(i, right);
+        return i;
+    }
+
+    private boolean less(PathNode pn1, PathNode pn2) {
+        return cmp.compare(pn1, pn2) <= 0;
+    }
+
+    private void exch(int pn1, int pn2) {
+        PathNode pn3 = pna[pn1];
+        pna[pn1] = pna[pn2];
+        pna[pn2] = pn3;
     }
 
     public static void main(String[] args) {
         ShortestPath sp = new ShortestPath(new File(FILENAME), new orderPathByWeight());
         sp.separeChunks();
-//        sp.mergeTwoChunks(PATH + "USA-road-d.NY.gr.0", PATH + "USA-road-d.NY.gr.7");
-//        sp.mergeTwoChunks(PATH + "USA-road-d.NY.gr.1", PATH + "USA-road-d.NY.gr.6");
-//        sp.mergeTwoChunks(PATH + "USA-road-d.NY.gr.2", PATH + "USA-road-d.NY.gr.5");
-//        sp.mergeTwoChunks(PATH + "USA-road-d.NY.gr.3", PATH + "USA-road-d.NY.gr.4");
+        //sp.merge();
+    }
 
+    private static class PathNode implements Comparable<PathNode> {
 
-        sp.merge();
+        private char arc;
+        private int tail;
+        private int head;
+        private int weight;
+
+        public PathNode(char a, int t, int h, int w) {
+            arc = a;
+            tail = t;
+            head = h;
+            weight = w;
+        }
+
+        public int getHead() {
+            return head;
+        }
+
+        public int getTail() {
+            return tail;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        @Override
+        public String toString() {
+            return arc + " " + tail + " " + head + " " + weight;
+        }
+
+        public int compareTo(PathNode o) {
+            return this.weight - o.weight;
+        }
     }
 
     private static class orderPathByTail implements Comparator<PathNode> {
