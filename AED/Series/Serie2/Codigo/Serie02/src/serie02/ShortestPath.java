@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.StringTokenizer;
@@ -27,9 +29,11 @@ public class ShortestPath {
     private File filename;
     private PathNode[] pna;
     private int nbrFiles = 0;
+    private Comparator cmp;
 
-    public ShortestPath(File filename) {
+    public ShortestPath(File filename, Comparator cmp) {
         this.filename = filename;
+        this.cmp=cmp;
         initValues();
     }
 
@@ -55,15 +59,15 @@ public class ShortestPath {
                 if (type.equals("a") && (rowNbr < MAX_LINES)) {
                     pna[rowNbr++] = setPathNode(element);
                 } else if (rowNbr == MAX_LINES) {
-                    mySort(pna, rowNbr, new orderPathByWeight());
-                    write(pna, rowNbr,filename + "." + nbrFiles++);
+                    mySort(pna, rowNbr, cmp);
+                    write(pna, rowNbr, filename + "." + nbrFiles++,false);
                     initValues();
                     rowNbr = 0;
                 }
             }
             if (rowNbr > 0 && rowNbr < MAX_LINES) {
-                mySort(pna, rowNbr, new orderPathByWeight());
-                write(pna, rowNbr,filename + "." + nbrFiles++);
+                mySort(pna, rowNbr, cmp);
+                write(pna, rowNbr, filename + "." + nbrFiles++,false);
                 initValues();
                 rowNbr = 0;
             }
@@ -92,59 +96,26 @@ public class ShortestPath {
     public void mergeTwoChunks(String file1, String file2) {
         BufferedReader fr1 = null;
         BufferedReader fr2 = null;
-        StringTokenizer element1 = null;
-        StringTokenizer element2 = null;
-        String type = null;
-        String line1 = null;
-        String line2 = null;
 
         try {
             fr1 = new BufferedReader(new FileReader(file1));
             fr2 = new BufferedReader(new FileReader(file2));
-            int rowNbr = 0;
-            boolean lf1 = false;
-            boolean lf2 = false;
-            boolean f1end=false;
-            boolean f2end=false;
-            PathNode pn1 = null;
-            PathNode pn2 = null;
+            Iterator fileLineIter= fileLineIterator(fr1, fr2, cmp);
+            int idx=0;
+            int idx2=0;
             initValues();
-            while (!(f1end && f2end)) {
-                if (!lf1) {
-                    line1 = fr1.readLine();
-                    if (line1 == null){
-                        f1end=true;
-                        //processa resto do outro ficheiro se o mesmo não tiver acabado
-                    }
-                    element1 = new StringTokenizer(line1, " ");
-                    type = (String) element1.nextElement();
-                    pn1 = setPathNode(element1);
-                    lf1=true;
-                }
-                if (!lf2) {
-                    line2 = fr2.readLine();
-                    if (line2 == null){
-                        f2end=true;
-                        //processa resto do outro ficheirose o mesmo não tiver acabado
-                    }
-                    element2 = new StringTokenizer(line2, " ");
-                    type = (String) element2.nextElement();
-                    pn2 = setPathNode(element2);
-                    lf2=true;
-                }
-                if (pn1.getWeight() <= pn2.getWeight()){
-                    pna[rowNbr++]=pn1;
-                    lf1=false;
+            while (fileLineIter.hasNext()){
+                if (idx < MAX_LINES){
+                    pna[idx++]=(PathNode)fileLineIter.next();
                 }else{
-                    pna[rowNbr++]=pn2;
-                    lf2=false;
-                }
-                if (rowNbr==MAX_LINES){
-                    write(pna, rowNbr,filename + ".merged." + nbrFiles/2);
-                    rowNbr=0;
-                    
+                    write(pna, idx, FILENAME+".merged."+idx2,true);
+                    idx=0;
+                    initValues();
                 }
             }
+                    write(pna, idx, FILENAME+".merged."+idx2, true);
+                    idx=0;
+                    initValues();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -158,20 +129,120 @@ public class ShortestPath {
                 Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 
-    private void processFile(BufferedReader bf){
-        
+//    public <PathNode> Iterable<PathNode> fileLineIterator(final BufferedReader br1, final BufferedReader br2, final Comparator cmp) {
+//        return new Iterable<PathNode>() {
+//
+            public <PathNode>Iterator<PathNode> fileLineIterator(final BufferedReader br1, final BufferedReader br2, final Comparator cmp) {
+                return new Iterator<PathNode>() {
+
+                    StringTokenizer element = null;
+                    String type = null;
+                    String line = null;
+                    PathNode node = null;
+                    PathNode tmpNode1 = null;
+                    PathNode tmpNode2 = null;
+                    boolean file1End = false;
+                    boolean file2End = false;
+                    boolean file1LineReturned = true;
+                    boolean file2LineReturned = true;
+
+                    public boolean hasNext() {
+                        //Se o ficheiro1 não chegou ao fim
+                        if (!file1End) {
+                            //Se a ultima linha retornada foi do ficheiro 1
+                            if (file1LineReturned) {
+                                try {
+                                    line = br1.readLine();
+                                    if (line != null) {
+                                        element = new StringTokenizer(line, " ");
+                                        type = (String) element.nextElement();
+                                        tmpNode1 = (PathNode)setPathNode(element);
+                                    } else {
+                                        file1End = true;
+                                    }
+                                } catch (IOException ex) {
+                                    Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
+                        //Se o ficheiro2 não chegou ao fim
+                        if (!file2End) {
+                            //Se a ultima linha retornada foi do ficheiro 2
+                            if (file2LineReturned) {
+                                try {
+                                    line = br2.readLine();
+                                    if (line != null) {
+                                        element = new StringTokenizer(line, " ");
+                                        type = (String) element.nextElement();
+                                        tmpNode2 = (PathNode) setPathNode(element);
+                                    } else {
+                                        file2End = true;
+                                    }
+                                } catch (IOException ex) {
+                                    Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                            }
+                        }
+
+                        //Processa a comparação e retorno.
+                        if (!file1End) {
+                            if (!file2End) {
+                                if (cmp.compare(tmpNode1, tmpNode2) < 1) {
+                                    node = tmpNode1;
+                                    file1LineReturned = true;
+                                    file2LineReturned = false;
+                                } else {
+                                    node = tmpNode2;
+                                    file2LineReturned = true;
+                                    file1LineReturned = false;
+                                }
+                            } else {
+                                node = tmpNode1;
+                                file1LineReturned = true;
+                                file2LineReturned = false;
+                            }
+                        } else {
+                            if (!file2End) {
+                                node = tmpNode2;
+                                file2LineReturned = true;
+                                file1LineReturned = false;
+                            } else {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    public PathNode next() {
+                        if (node == null) {
+                            throw new NoSuchElementException("No more lines to be read.");
+                        }
+                        PathNode p = node;
+                        node = null;
+                        return p;
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+                };
+            }
+   //     };
+   // }
+
+    private void processFile(BufferedReader bf) {
     }
 
     private void read(BufferedReader fr) throws IOException {
     }
 
-    private void write(PathNode[] pn, int len, String outputFile) throws IOException {
+    private void write(PathNode[] pn, int len, String outputFile, boolean merge) throws IOException {
         int lnNbr = 0;
 
-        BufferedWriter fw = new BufferedWriter(new FileWriter(outputFile));
+        BufferedWriter fw = new BufferedWriter(new FileWriter(outputFile,merge));
 
         while (lnNbr < len) {
             fw.write(pn[lnNbr++].toString() + "\n");
@@ -184,65 +255,33 @@ public class ShortestPath {
     }
 
     public static void main(String[] args) {
-        ShortestPath sp = new ShortestPath(new File(FILENAME));
+        ShortestPath sp = new ShortestPath(new File(FILENAME),new orderPathByHead());
         sp.separeChunks();
         sp.mergeTwoChunks(PATH + "USA-road-d.NY.gr.0", PATH + "USA-road-d.NY.gr.1");
     }
-}
 
-class PathNode implements Comparable<PathNode> {
 
-    private char arc;
-    private int tail;
-    private int head;
-    private int weight;
-
-    public PathNode(char a, int t, int h, int w) {
-        arc = a;
-        tail = t;
-        head = h;
-        weight = w;
-    }
-
-    public int getHead() {
-        return head;
-    }
-
-    public int getTail() {
-        return tail;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    @Override
-    public String toString() {
-        return arc + " " + tail + " " + head + " " + weight;
-    }
-
-    public int compareTo(PathNode o) {
-        return this.weight - o.weight;
-    }
-}
-
-class orderPathByTail implements Comparator<PathNode> {
+private static class orderPathByTail implements Comparator<PathNode> {
 
     public int compare(PathNode o1, PathNode o2) {
         return o1.getTail() - o2.getTail();
     }
 }
 
-class orderPathByHead implements Comparator<PathNode> {
+private static class orderPathByHead implements Comparator<PathNode> {
 
     public int compare(PathNode o1, PathNode o2) {
         return o1.getHead() - o2.getHead();
     }
 }
 
-class orderPathByWeight implements Comparator<PathNode> {
+private static class orderPathByWeight   implements Comparator<PathNode> {
 
-    public int compare(PathNode o1, PathNode o2) {
-        return o1.getWeight() - o2.getWeight();
+    public int compare(PathNode node1, PathNode node2) {
+        return node1.getWeight() - node2.getWeight();
     }
 }
+
+
+}
+
