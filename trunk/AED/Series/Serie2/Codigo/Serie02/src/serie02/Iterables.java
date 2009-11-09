@@ -31,6 +31,7 @@ public class Iterables {
                     private Iterator<E> i1 = iter1.iterator();
                     private Iterator<E> i2 = null;
                     E element =null;
+
                     public boolean hasNext() {
                         if (i1.hasNext()){
                             element=i1.next();
@@ -41,18 +42,21 @@ public class Iterables {
                                 element=i2.next();
                                 return true;
                             }else{
+                                element=null;
                                 return false;
                             }
                         }
                     }
-                   public E next() {
-                        if (element == null) {
+
+                    public E next() {
+                        if (element == null && !hasNext()) {
                             throw new NoSuchElementException();
                         }
                         E e = element;
                         element=null;
                         return e;
                     }
+
                     public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
@@ -93,11 +97,12 @@ public class Iterables {
                                 return true;
                             }
                         }
+                        element=null;
                         return false;
                     }
 
                     public E next() {
-                        if (element==null){
+                        if (element==null && !hasNext()){
                             throw new NoSuchElementException();
                         }
                         E e=element;
