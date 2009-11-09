@@ -7,9 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,11 +22,8 @@ import java.util.logging.Logger;
  * -> 33595: Nuno Sousa
  */
 /**
- *
- * Todo List:
- * -> Metodo de Ordenação (quickSort)
- * -> Método Recursivo para Merge dos ficheiros
- * -> Escrever o Header Inicial do Ficheiro
+ * StringTokenizer foi usado em vez do String.split uma vez que o String.split
+ * demonstrou ser bastante mais lento que o tokenizer
  */
 public class ShortestPath {
 
@@ -44,7 +43,6 @@ public class ShortestPath {
         this.filename = filename;
         this.cmp = cmp;
         pna = null;
-        //initValues();
     }
 
     public void initValues() {
@@ -54,7 +52,7 @@ public class ShortestPath {
 
     public int separeChunks() {
         BufferedReader fr = null;
-        String[] element = null;
+        StringTokenizer element = null;
         String type = null;
         String line = null;
         int rowNbr = 0;
@@ -62,23 +60,27 @@ public class ShortestPath {
         try {
             fr = new BufferedReader(new FileReader(filename));
             while ((line = fr.readLine()) != null) {
-                element = line.split(" ");
-                type = element[0];
+                element = new StringTokenizer(line, " ");
+                type = (String) element.nextElement();
+
                 if (type.equals("c")) {
                     continue;
                 }
                 if (type.equals("p")) {
-                    maxLines = Integer.parseInt(element[3]);
+                    for (int i = 1; i < 3; ++i) {
+                        element.nextElement();
+                    }
+                    maxLines = Integer.parseInt((String) element.nextElement());
                     maxLines = (maxLines > MAX_LINES) ? MAX_LINES : maxLines;
                     pna = new PathNode[maxLines];
                 } else if (type.equals("a") && (rowNbr < maxLines)) {
-                    pna[rowNbr++] = setPathNode(element[1], element[2], element[3]);
+                    pna[rowNbr++] = setPathNode(element);
                 } else if (rowNbr == maxLines) {
                     mySort(rowNbr - 1);
                     write(pna, rowNbr, filename + "." + nbrFiles++, false);
                     initValues();
                     rowNbr = 0;
-                    pna[rowNbr++] = setPathNode(element[1], element[2], element[3]);
+                    pna[rowNbr++] = setPathNode(element);
                 }
             }
             if (rowNbr > 0 && rowNbr < maxLines) {
@@ -101,10 +103,11 @@ public class ShortestPath {
         return nbrFiles;
     }
 
-    private PathNode setPathNode(String element1, String element2, String element3) {
-        int tail = Integer.parseInt(element1);
-        int head = Integer.parseInt(element2);
-        int weight = Integer.parseInt(element3);
+    private PathNode setPathNode(StringTokenizer element) {
+        int tail = Integer.parseInt((String) element.nextElement());
+        int head = Integer.parseInt((String) element.nextElement());
+        int weight = Integer.parseInt((String) element.nextElement());
+
         PathNode pn = new PathNode('a', tail, head, weight);
         return pn;
     }
@@ -177,8 +180,9 @@ public class ShortestPath {
     public <PathNode> Iterator<PathNode> fileLineIterator(final BufferedReader br1, final BufferedReader br2, final Comparator cmp) {
         return new Iterator<PathNode>() {
 
-            String[] element = null;
+            StringTokenizer element = null;
             String line = null;
+            String type = null;
             PathNode node = null;
             PathNode tmpNode1 = null;
             PathNode tmpNode2 = null;
@@ -195,8 +199,9 @@ public class ShortestPath {
                         try {
                             line = br1.readLine();
                             if (line != null) {
-                                element = line.split(" ");
-                                tmpNode1 = (PathNode) setPathNode(element[1], element[2], element[3]);
+                                element = new StringTokenizer(line, " ");
+                                type = (String) element.nextElement();
+                                tmpNode1 = (PathNode) setPathNode(element);
                             } else {
                                 file1End = true;
                             }
@@ -212,8 +217,9 @@ public class ShortestPath {
                         try {
                             line = br2.readLine();
                             if (line != null) {
-                                element = line.split(" ");
-                                tmpNode2 = (PathNode) setPathNode(element[1], element[2], element[3]);
+                                element = new StringTokenizer(line, " ");
+                                type = (String) element.nextElement();
+                                tmpNode2 = (PathNode) setPathNode(element);
                             } else {
                                 file2End = true;
                             }
@@ -320,7 +326,7 @@ public class ShortestPath {
         int i, j;//i da esquerda para a direita, j ao contrário
         int x = median(left, right);
         exch(x, right);
-        
+
         PathNode v = pna[right];
         i = left - 1;
         j = right;
