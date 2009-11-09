@@ -19,8 +19,8 @@ public class BinaryHeaps {
      * • Apresentar primeiro a linha com a raíz e por último a linha com os
      * elementos de maior profundidade.
      * • Em cada linha, os elementos são apresentados da esquerda para a direita.
-     * @param v
-     * @param count
+     * @param v - representa o Heap
+     * @param count - numero de elementos dos quais queremos imprimir.
      */
     public static void printByDepth(int[] v, int count){
         int level=0;

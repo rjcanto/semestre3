@@ -27,8 +27,8 @@ import java.util.logging.Logger;
  */
 public class ShortestPath {
 
-    private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
-    //private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
+    //private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
+    private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
     private static final String FILENAME = PATH + "USA-road-d.NY.gr";
     private final String MERGE_FILENAME = FILENAME + ".merged";
     private final String SORTED_FILENAME = FILENAME + ".sorted";
