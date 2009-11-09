@@ -28,8 +28,8 @@ import java.util.logging.Logger;
  */
 public class ShortestPath {
 
-    //private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
-    private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
+    private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
+    //private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
     private static final String FILENAME = PATH + "USA-road-d.NY.gr";
     private final String MERGE_FILENAME = FILENAME + ".merged";
     private final String SORTED_FILENAME = FILENAME + ".sorted";
@@ -280,33 +280,58 @@ public class ShortestPath {
     }
 
     private void mySort(int len) {
-        //Arrays.sort(p, 0, len, cmp);
+        //Arrays.sort(pna, 0, len, cmp);
         quicksort(0, len);
     }
 
     private void quicksort(int left, int right) {
-        if (right > left){
+        if (right > left) {
             int idx = partition(left, right);
             quicksort(idx + 1, right);
             quicksort(left, idx - 1);
-            
+
         }
     }
 
-    private int partition(int left, int right) {
+    private int median(int left, int right) {
+        int mid = (right - left) / 2;
+        int idx;
+        if (cmp.compare(pna[left], pna[mid]) < 0) {
+            if (cmp.compare(pna[mid], pna[right]) < 0) {
+                idx = mid;
+            } else {
+                idx = right;
+            }
+        } else {
+            if (cmp.compare(pna[left], pna[right]) < 0) {
+                idx = left;
+            } else {
+                if (cmp.compare(pna[mid], pna[right]) < 0) {
+                    idx = right;
+                } else {
+                    idx = mid;
+                }
+            }
+        }
+        return idx;
+    }
 
+    private int partition(int left, int right) {
         int i, j;//i da esquerda para a direita, j ao contrário
-        PathNode v= pna[right];
+        int x = median(left, right);
+        exch(x, right);
+        
+        PathNode v = pna[right];
         i = left - 1;
         j = right;
-        for (;;) {
-            while (less(pna[++i], v) && i <right);
+        while (j > i) {
+            while (less(pna[++i], v) && i < right);
 
             while (less(v, pna[--j]) && j > left);
-                if (j == left) {
-                    break;
-                }
-            
+            if (j == left) {
+                break;
+            }
+
             if (i >= j) {
                 break;
             }
@@ -327,7 +352,7 @@ public class ShortestPath {
     }
 
     public static void main(String[] args) {
-        ShortestPath sp = new ShortestPath(new File(FILENAME), new orderPathByHead());
+        ShortestPath sp = new ShortestPath(new File(FILENAME), new orderPathByWeight());
         sp.separeChunks();
         sp.merge();
     }
