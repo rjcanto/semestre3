@@ -18,22 +18,22 @@
  * -> processArgs(char * type, char * filter)
  *    Processa os argumentos passados ao programa. Se não tiver argumentos ou o 
  *    primeiro argumento for h (ou H) mostra a ajuda. Se o primeiro argumento for 
- *    U (Unidade Curricular), D (Docente) ou T(turma) chama as funções que vão aplicar
- *    os filtros para a listagem a mostrar.
+ *    U (Unidade Curricular), D (Docente) ou T(turma) chama a função apply_if definida
+ *    em assembly enviando um ponteiro para a estrutura de dados, o filtro, 
+ *    um ponteiro para a função de comparação e a função a aplicar caso o resultado da
+ *    comparacao seja diferente de 0.
  * 
- * -> listU(char * filter), listD(char * filter), listG(char * filter)
- * 	  filtra os dados de acordo co ma listagem pedida pelo utilizador. Caso o 2º
- *    argumento não seja indicado mostra a lista de Unidades Curriculares, Docentes ou
- * 	  Grupos de turmas disponíveis para pesquisa.
- *    Caso exista 2º argumento produz a lista de acordo com o filtro indicado.
+ * -> compareU(void * elem, void * filter), compareD(void * elem, void * filter), compareG(void * elem, void * filter)
+ * 	  compara um campo da estrutura elem com o filtro.
+ * 	  devolve 0 se forem iguais ou 1 se diferentes
  * 
  * -> findU(char * str, int max), findD(char * str, int max), findG(char * str, int max)	
  *    As funções find são utilizadas para não repetir dados quando se mostra ao utilizador
  * 	  as listagens de filtros disponíveis.
  * 
- * ->addAluno(unsigned int num)
- * 	  Quando encontra um aluno que respeite os filtros indicados este é adicionado à lista
- * 	  final ordenados.
+ * -> addAluno(void * elem)
+ * 	  Recebe um ponteiro para um elemento da estrutura e adiciona esse aluno à listagem a apresentar 
+ *    no final, por ordem alfabética, 
  * 
  * -> findTurma(char * str)
  *    Para processamento das Reservas procura a turma a que cada aluno se quer inscrever
@@ -48,6 +48,11 @@
  * -> Uma parte que gere o input recebido, e alimenta as estruturas definidas com os dados
  * -> Uma parte que processa os argumentos, constrói a listagem pedida e apresenta a listagem
  *    ao utilizador
+ * -> Com a utilização do apply_if genérico diminui-se a quantidade de código a desenvolver do
+ *    lado do C. Poderiamos também usar o aplly_if com uma alteração aos métodos findU, findD e findG
+ *    para passar pelos elementos do array turmas mas teria de existir uma alteração da assinatura uma vez
+ * 	  que o scope do find varia de elemento para elemento. A condição de paragem é variável.
+ * 
  */ 
 
 
@@ -86,7 +91,6 @@ int apply_if(void * data, size_t dim, size_t len, void * filter,
 
 void addAluno(void * elem){
 	int i=0,j;
-/*	Reserva * aux = (Reserva *)elem;*/
 	unsigned int num = (*(Reserva *)elem).numAluno;
 	while(i<idxA && num>listaAlunos[i])
 		++i;
