@@ -14,28 +14,33 @@ import java.util.NoSuchElementException;
  * -> 31401: Nuno Cancelo
  * -> 33595: Nuno Sousa
  * @param <E>
+ *
+ * Muitos dos comentários dos métodos, é literalmente copy/paste do texto
+ * contido na documentação do LinkedList, pois não nos faz muito sentido
+ * traduzir uma classe que acabamos por implementar.
+ * 
  */
 public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, Deque<E>, Cloneable {
 
     private Node<E> h = new Node<E>(null, null, null);
     private int size = 0;
 
+    /**
+     * Classe que implemta o ListeIterator
+     */
     private class LstItr implements ListIterator<E> {
 
         private Node<E> previous = h;
         private Node<E> next;
         private int idx;
 
-        /*done*/
         public LstItr(int index) {
             next = AedLinkedList.this.getNodeAtIndex(index);
         }
-        /*done*/
 
         public boolean hasNext() {
             return idx != size;
         }
-        /*done*/
 
         public E next() {
             if (idx == size) {
@@ -46,12 +51,10 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             idx++;
             return previous.element;
         }
-        /*done*/
 
         public boolean hasPrevious() {
             return idx != 0;
         }
-        /*done*/
 
         public E previous() {
             if (idx == 0) {
@@ -61,17 +64,14 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             --idx;
             return previous.element;
         }
-        /*done*/
 
         public int nextIndex() {
             return idx;
         }
-        /*done*/
 
         public int previousIndex() {
             return idx - 1;
         }
-        /*done*/
 
         public void set(E e) {
             if (previous == h) {
@@ -79,14 +79,12 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             }
             previous.element = e;
         }
-        /*done*/
 
         public void add(E e) {
             previous = h;
             addAtHead(next, e);
             ++idx;
         }
-        /*done*/
 
         public void remove() {
             Node<E> tmp = previous.next;
@@ -102,8 +100,13 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             previous = h;
         }
     }
-    /*done*/
 
+    /**
+     *
+     * @param fromIndex - low endpoint (inclusive) of the subList
+     * @param toIndex - high endpoint (exclusive) of the subList
+     * @return - a view of the specified range within this list
+     */
     public List<E> subList(int fromIndex, int toIndex) {
         if (fromIndex < 0 || toIndex > size) {
             throw new IndexOutOfBoundsException();
@@ -119,8 +122,10 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         }
         return tmp;
     }
-    /*done*/
 
+    /**
+     * Classe que implementa um iterador, de forma a ter um Iterador descendente
+     */
     private class DescendingIterator implements Iterator {
 
         final LstItr lstItr = new LstItr(size());
@@ -140,13 +145,20 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             lstItr.remove();
         }
     }
-    /*done*/
 
+    /**
+     *  Returns an iterator over the elements in this deque in reverse sequential order.
+     * @return
+     */
     public Iterator<E> descendingIterator() {
         return new DescendingIterator();
     }
-    /*done*/
 
+    /**
+     * Returns the index of the first occurrence of the specified element in this list, or -1 if this list does not contain the element.
+     * @param e
+     * @return
+     */
     public int indexOf(Object e) {
         int index = 0;
         if (e == null) {
@@ -167,8 +179,12 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         return -1;
 
     }
-    /*done*/
 
+    /**
+     * Returns the index of the last occurrence of the specified element in this list, or -1 if this list does not contain the element.
+     * @param e
+     * @return
+     */
     public int lastIndexOf(Object e) {
         int index = 0;
         if (e == null) {
@@ -188,8 +204,12 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         }
         return -1;
     }
-    /*done*/
 
+    /**
+     * Removes the last occurrence of the specified element in this list (when traversing the list from head to tail).
+     * @param e
+     * @return
+     */
     public boolean removeLastOccurrence(Object e) {
         if (e == null) {
             for (Node<E> node = h.previous; node != h; node = node.previous) {
@@ -208,8 +228,16 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         }
         return false;
     }
-    /*done*/
 
+    /**
+     * Método que nos permite (mais facilmente) implementar a adição de elementos
+     * à cabeça da lista.
+     * A necessidade surgiu quando notamos que teriamos que repetir o código em
+     * mais do que um método.
+     * @param node
+     * @param e
+     * @return
+     */
     private Node<E> addAtHead(Node<E> node, E e) {
         Node<E> tmp = new Node<E>(node, node.previous, e);
         tmp.next.previous = tmp;
@@ -217,111 +245,175 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         size++;
         return tmp;
     }
-    /*done*/
 
+    /**
+     * Inserts the specified element at the beginning of this list.
+     * @param e
+     */
     public void addFirst(E e) {
         addAtHead(h.next, e);
     }
-    /*done*/
 
+    /**
+     * Appends the specified element to the end of this list.
+     * @param e
+     */
     public void addLast(E e) {
         addAtHead(h, e);
     }
-    /*done*/
 
+    /**
+     * Inserts the specified element at the front of this list.
+     * @param e
+     * @return
+     */
     public boolean offerFirst(E e) {
         addFirst(e);
         return true;
     }
-    /*done*/
 
+    /**
+     * Inserts the specified element at the end of this list.
+     * @param e
+     * @return
+     */
     public boolean offerLast(E e) {
         addLast(e);
         return true;
     }
-    /*done*/
 
+    /**
+     * Retrieves and removes the first element of this list, or returns null if this list is empty.
+     * @return
+     */
     public E pollFirst() {
         return (size == 0) ? null : getFirst();
     }
-    /*done*/
 
+    /**
+     * Retrieves and removes the last element of this list, or returns null if this list is empty.
+     * @return
+     */
     public E pollLast() {
         return (size == 0) ? null : getLast();
     }
-    /*done*/
 
+    /**
+     * Returns the first element in this list.
+     * @return
+     */
     public E getFirst() {
         if (size == 0) {
             throw new NoSuchElementException();
         }
         return h.next.element;
     }
-    /*done*/
 
+    /**
+     * Returns the last element in this list.
+     * @return
+     */
     public E getLast() {
         if (size == 0) {
             throw new NoSuchElementException();
         }
         return h.previous.element;
     }
-    /*done*/
 
+    /**
+     * Retrieves, but does not remove, the first element of this list, or returns null if this list is empty.
+     * @return
+     */
     public E peekFirst() {
         return (size == 0) ? null : getFirst();
     }
-    /*done*/
 
+    /**
+     * Retrieves, but does not remove, the last element of this list, or returns null if this list is empty.
+     * @return
+     */
     public E peekLast() {
         return (size == 0) ? null : getLast();
     }
-    /*done*/
 
+    /**
+     * Removes the first occurrence of the specified element in this list (when traversing the list from head to tail).
+     * @param o
+     * @return
+     */
     public boolean removeFirstOccurrence(Object o) {
         return remove((E) o);
     }
-    /*done*/
 
+    /**
+     * Adds the specified element as the tail (last element) of this list.
+     * @param e
+     * @return
+     */
     public boolean offer(E e) {
         return add(e);
     }
-    /*done*/
 
+    /**
+     * Retrieves and removes the head (first element) of this list
+     * @return
+     */
     public E poll() {
         return (size == 0) ? null : getFirst();
     }
-    /*done*/
 
+    /**
+     * Retrieves, but does not remove, the head (first element) of this list.
+     * @return
+     */
     public E element() {
         return getFirst();
     }
-    /*done*/
 
+    /**
+     * Retrieves, but does not remove, the head (first element) of this list.
+     * @return
+     */
     public E peek() {
         return (size == 0) ? null : getFirst();
     }
-    /*done*/
 
+    /**
+     * Pushes an element onto the stack represented by this list.
+     * @param e
+     */
     public void push(E e) {
         addFirst(e);
     }
-    /*done*/
 
+    /**
+     * Pops an element from the stack represented by this list.
+     * @return
+     */
     public E pop() {
         return removeFirst();
     }
-    /*done*/
 
+    /**
+     * Returns an iterator over the elements in this list (in proper sequence).
+     * @return
+     */
     public Iterator<E> iterator() {
         return new LstItr(0);
     }
-    /*done*/
 
+    /**
+     * Returns the number of elements in this list.
+     * @return
+     */
     public int size() {
         return size;
     }
-    /*done*/
 
+    /**
+     * Classe com a definição do Node que vai ser utilizado na utilização da Lista.
+     * @param <E>
+     */
     private class Node<E> {
 
         Node<E> next;
@@ -334,8 +426,16 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
             this.element = element;
         }
     }
-    /*done*/
 
+    /**
+     * Método que nos permite (mais facilmente) implementar a obtenção de elementos
+     * da lista.
+     * A necessidade surgiu quando notamos que teriamos que repetir o código em
+     * mais do que um método.
+     *
+     * @param index
+     * @return
+     */
     private Node<E> getNodeAtIndex(int index) {
         Node<E> next;
         if (index < 0 || index > size) {
@@ -355,8 +455,13 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         }
         return next;
     }
-    /*done*/
 
+    /**
+     * Appends all of the elements in the specified collection to the end of this list, in the order that they are returned by the specified collection's iterator.
+     * @param index
+     * @param c
+     * @return
+     */
     public boolean addAll(int index, Collection<? extends E> c) {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException();
@@ -379,32 +484,53 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         size += newElmCnt;
         return true;
     }
-    /*done*/
 
+    /**
+     * Returns the element at the specified position in this list.
+     * @param index
+     * @return
+     */
     public E get(int index) {
         return getNodeAtIndex(index).element;
     }
-    /*done*/
 
+    /**
+     * Replaces the element at the specified position in this list with the specified element.
+     * @param index
+     * @param element
+     * @return
+     */
     public E set(int index, E element) {
         Node<E> tmp = getNodeAtIndex(index);
         E retE = tmp.element;
         tmp.element = element;
         return retE;
     }
-    /*done*/
 
+    /**
+     * Inserts the specified element at the specified position in this list.
+     * @param index
+     * @param element
+     */
     public void add(int index, E element) {
         Node<E> tmp = getNodeAtIndex(index);
         addAtHead((size == 0) ? h : tmp, element);
     }
-    /*done*/
 
+    /**
+     * Removes the element at the specified position in this list.
+     * @param index
+     * @return
+     */
     public E remove(int index) {
         return remove(getNodeAtIndex(index));
     }
-    /*done*/
 
+    /**
+     * Removes the first occurrence of the specified element from this list, if it is present.
+     * @param node
+     * @return
+     */
     private E remove(Node<E> node) {
         if (node == h) {
             throw new NoSuchElementException();
@@ -417,28 +543,44 @@ public class AedLinkedList<E> extends AbstractCollection<E> implements List<E>, 
         --size;
         return e;
     }
-    /*done*/
 
+    /**
+     * Retrieves and removes the head (first element) of this list.
+     * @return
+     */
     public E remove() {
         return removeFirst();
     }
-    /*Done*/
 
+    /**
+     * Removes and returns the first element from this list.
+     * @return
+     */
     public E removeFirst() {
         return remove(h.next);
     }
-    /*Done*/
 
+    /**
+     * Removes and returns the last element from this list.
+     * @return
+     */
     public E removeLast() {
         return remove(h.previous);
     }
-    /*done*/
 
+    /**
+     * Returns a list-iterator of the elements in this list (in proper sequence), starting at the specified position in the list.
+     * @param index
+     * @return
+     */
     public ListIterator<E> listIterator(int index) {
         return new LstItr(index);
     }
-    /*Node*/
 
+    /**
+     * Returns a list iterator over the elements in this list (in proper sequence). 
+     * @return
+     */
     public ListIterator<E> listIterator() {
         return new LstItr(0);
     }
