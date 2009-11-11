@@ -8,6 +8,8 @@ import java.util.NoSuchElementException;
  * -> 30896: Ricardo Canto
  * -> 31401: Nuno Cancelo
  * -> 33595: Nuno Sousa
+ *
+ * Os comentários relevantes encontram-se no relatório.
  */
 public class Iterables {
     /**

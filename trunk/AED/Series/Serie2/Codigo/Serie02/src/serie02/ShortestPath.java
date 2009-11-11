@@ -27,6 +27,10 @@ import java.util.logging.Logger;
  */
 public class ShortestPath {
 
+    /*
+     * Esta duas primeiras linhas estão utilizadas de forma que podessemos testar
+     * num ambiente Windows e Linux.
+     * */
     //private static final String PATH = "D:/ISEL/Trabalhos/AED/Series/Serie2/";
     private static final String PATH = "/home/masterzdran/ISEL/semestre3/AED/Series/Serie2/";
     private static final String FILENAME = PATH + "USA-road-d.NY.gr";
@@ -39,18 +43,43 @@ public class ShortestPath {
     private int nbrFiles = 0;
     private int maxLines;
 
+    /**
+     * Construtor que permite especificar qual o método de comparação e o ficheiro
+     * a ser ordenado pelo programa, utilizando o algoritmo de ordenação externa.
+     * @param filename
+     * @param cmp
+     */
     public ShortestPath(File filename, Comparator cmp) {
         this.filename = filename;
         this.cmp = cmp;
         pna = null;
     }
-
+    /**
+     * Função para iniciar os valores do buffer.
+     */
     public void initValues() {
         pna = null;
         pna = new PathNode[maxLines];
     }
-
-    public int separeChunks() {
+    /**
+     * Metodo responsável pela separação do ficheiro inicial em pedaços, de forma
+     * a poder ser realizada a sua ordenação no buffer disponível.
+     * Foi utilizada a Classe StringTokenizer (e em noutros métodos) por uma
+     * questão de performance. Apesar de na documentação recomendar a utilização
+     * da classe String.split, a sua implementação demonstrou um decrescimo de
+     * performance considerável.
+     * Em pesquisa pela Web, verificou-se o estudo de vários utilizadores indicando
+     * que que performance era degradada em intervalos entre 60 - 120%, dependendo
+     * do tamanho da string a qual era feito o parse. Os nossos testes com ambas
+     * as implementações verifaram que o StringTokenizer era mais rápido.
+     *
+     * Uma vez que no conteudo do ficheiro a linha começando por 'p' tem a
+     * indicação do numero de arcos do ficheiro, fazemos parse dessa linha para
+     * gerar o tamanho do array a ser gerado, se o numero de arcos for superior
+     * ao tamanho do nosso buffer, o array fica limitado ao nosso buffer. Desta
+     * forma fica criado um tamanho dinamico e versátil.
+     */
+    public void separeChunks() {
         BufferedReader fr = null;
         StringTokenizer element = null;
         String type = null;
@@ -100,9 +129,13 @@ public class ShortestPath {
                 Logger.getLogger(ShortestPath.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return nbrFiles;
     }
-
+    /**
+     * Este método serve para criar o Node, contendo a informação relevante na
+     * linha de registo 'a'.
+     * @param element - Tokenizer que contem o iterador para o proximo elemento.
+     * @return retorna Objecto Node.
+     */
     private PathNode setPathNode(StringTokenizer element) {
         int tail = Integer.parseInt((String) element.nextElement());
         int head = Integer.parseInt((String) element.nextElement());
@@ -112,6 +145,14 @@ public class ShortestPath {
         return pn;
     }
 
+    /**
+     * Este método faz merge de todos os ficheiros separados até ficar um único,
+     * ordenado, com a extensão '.sorted'.
+     *
+     * É um método iterativo que concatena o último ficheiro com o primeiro, o
+     * penúltimo com segundo e assim sucessivamente, sendo os indicies
+     * actualizados para poder concatenar os ficheiros todos.
+     */
     public void merge() {
         int files2Decrease = nbrFiles - 1;
         int idx = 0;
@@ -132,7 +173,9 @@ public class ShortestPath {
      * @param file1
      * @param file2
      *
-     * O ficheiro agregado ordenado está no nome do primeiro argumento passado.
+     * Concatena ambos os ficheiros de forma ordenada, o  ficheiro agregado
+     * ordenado resultante está no nome do primeiro argumento passado.
+     *
      */
     public void mergeTwoChunks(String file1, String file2) {
         File f1 = new File(file1);
@@ -177,6 +220,18 @@ public class ShortestPath {
         }
     }
 
+    /**
+     * Iterador criado de forma a poder filtrar a informação contida em cada
+     * ficheiro. Faz a comparação de ambas as linhas e retorna o menor Node para
+     * a função chamadora. Faz a comparação dependendo do comparador que é passado
+     * pela assinatura.
+     *
+     * @param <PathNode>
+     * @param br1
+     * @param br2
+     * @param cmp
+     * @return
+     */
     public <PathNode> Iterator<PathNode> fileLineIterator(final BufferedReader br1, final BufferedReader br2, final Comparator cmp) {
         return new Iterator<PathNode>() {
 
@@ -273,7 +328,16 @@ public class ShortestPath {
             }
         };
     }
-
+    /**
+     * Escreve no ficheiro os dados contindos  no buffer. Tem um valor 'merge'
+     * booleano que indica se cria ficheiros novos (se estiver a false) ou
+     * concatena (se estiver a true).
+     * @param pn
+     * @param len
+     * @param outputFile
+     * @param merge
+     * @throws IOException
+     */
     private void write(PathNode[] pn, int len, String outputFile, boolean merge) throws IOException {
         int lnNbr = 0;
 
@@ -284,21 +348,32 @@ public class ShortestPath {
         }
         fw.close();
     }
-
+    /**
+     * Implementação do nosso método de implementação, utilizando o quicksort.
+     * Método utilizado pelo separeChuncks.
+     * @param len
+     */
     private void mySort(int len) {
-        //Arrays.sort(pna, 0, len, cmp);
         quicksort(0, len);
     }
-
+    /**
+     * Implementação do quicksort.
+     * @param left
+     * @param right
+     */
     private void quicksort(int left, int right) {
         if (right > left) {
             int idx = partition(left, right);
             quicksort(idx + 1, right);
             quicksort(left, idx - 1);
-
         }
     }
-
+    /**
+     * Obtenção da mediana, por 3 valores.
+     * @param left
+     * @param right
+     * @return
+     */
     private int median(int left, int right) {
         int mid = (right - left) / 2;
         int idx;
@@ -321,7 +396,12 @@ public class ShortestPath {
         }
         return idx;
     }
-
+    /**
+     * Metodo do Partiotion Sort
+     * @param left
+     * @param right
+     * @return
+     */
     private int partition(int left, int right) {
         int i, j;//i da esquerda para a direita, j ao contrário
         int x = median(left, right);
@@ -346,11 +426,21 @@ public class ShortestPath {
         exch(i, right);
         return i;
     }
-
+    /**
+     * Faz a comparação em dois Nodes, returnando true se o primeiro for menor ou
+     * ao segundo.
+     * @param pn1
+     * @param pn2
+     * @return
+     */
     private boolean less(PathNode pn1, PathNode pn2) {
         return cmp.compare(pn1, pn2) <= 0;
     }
-
+    /**
+     * Troca os objectos de posição.
+     * @param pn1
+     * @param pn2
+     */
     private void exch(int pn1, int pn2) {
         PathNode pn3 = pna[pn1];
         pna[pn1] = pna[pn2];
@@ -362,7 +452,9 @@ public class ShortestPath {
         sp.separeChunks();
         sp.merge();
     }
-
+    /**
+     * Classe com a definição do PathNode
+     */
     private static class PathNode implements Comparable<PathNode> {
 
         private char arc;
@@ -398,21 +490,27 @@ public class ShortestPath {
             return this.weight - o.weight;
         }
     }
-
+    /**
+     * Comparador Alternativo que ordena por tail
+     */
     private static class orderPathByTail implements Comparator<PathNode> {
 
         public int compare(PathNode o1, PathNode o2) {
             return o1.getTail() - o2.getTail();
         }
     }
-
+    /**
+     * Comparador Alternativo que ordena por head
+     */
     private static class orderPathByHead implements Comparator<PathNode> {
 
         public int compare(PathNode o1, PathNode o2) {
             return o1.getHead() - o2.getHead();
         }
     }
-
+    /**
+     * Comparador Alternativo que ordena por Peso
+     */
     private static class orderPathByWeight implements Comparator<PathNode> {
 
         public int compare(PathNode node1, PathNode node2) {
