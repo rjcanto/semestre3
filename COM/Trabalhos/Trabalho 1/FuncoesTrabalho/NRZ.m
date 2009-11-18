@@ -41,7 +41,7 @@ function [FS,myX,mynX]=NRZ(bits,Amp,CarrierFreq)
 	FS=2.2*(CarrierFreq/sampleBits);
 
 	%Numero de elementos da nossa Base tempo.
-	n=0:1:nbrBits*FS-1;
+	n=0:1/(nbrBits*FS-1):1;
 	%Nosso conjunto que vai conter o sinal de saída
 	myX= 1:1:nbrBits*FS;
 	mynX= 1:1:nbrBits*FS;
