@@ -18,7 +18,7 @@ void initFileHeader(struct FileHeader *fh){
 	fh->maxGrey=0;
 	fh->isFilled=0;
 }
-void listfileHeader(char* filename,struct FileHeader *fh){
+void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars){
 	puts("---------------------------------------");
 	printf("File: %s \nHeader File Information\n",filename);	
 	puts("---------------------------------------");
@@ -28,6 +28,7 @@ void listfileHeader(char* filename,struct FileHeader *fh){
 	if (fh->magicValue > 1){
 		printf("Max Gray: %i\n",fh->maxGrey);
 	}
+	printf("Nbr of chars read: %i\n",nbrChars);	
 	puts("---------------------------------------");
 }
 void fillHeader(struct FileHeader *fh, int value){
@@ -84,6 +85,10 @@ int processFile(char *filename, struct FileHeader *fhp) {
 		}
 		chars++;
 	}
+	while ((c=fgetc(fp))< 48 || c>57){
+		chars++;
+	}
+
 	fclose(fp);
 
  return chars;
@@ -93,14 +98,15 @@ int processFile(char *filename, struct FileHeader *fhp) {
 
 int main(int argc, char *argv[]) {
     struct FileHeader fhp;
+    int nbrChars=0;
     if (argc == 1) {
         puts("Need at least one argument to be processed!");
         return UNSUCCESS;
     }
     while ((argc-1) > 0) {
         argc--;
-	processFile(argv[argc],&fhp);
-	listfileHeader(argv[argc],&fhp);	
+	nbrChars=processFile(argv[argc],&fhp);
+	listfileHeader(argv[argc],&fhp,nbrChars);	
 
     }
 
