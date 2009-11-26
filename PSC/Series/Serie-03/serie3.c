@@ -11,52 +11,48 @@ struct FileHeader{
 	int maxGrey;
 	int isFilled;
 };
-
-void processLine() {
-
+void initFileHeader(struct FileHeader *fh){
+	fh->magicValue=0;
+	fh->imageWidth=0;
+	fh->imageHeight=0;
+	fh->maxGrey=0;
+	fh->isFilled=0;
 }
-
-void initFileHeader(struct FileHeader fh){
-	fh.magicValue=0;
-	fh.imageWidth=0;
-	fh.imageHeight=0;
-	fh.maxGrey=0;
-	fh.isFilled=0;
+void listfileHeader(char* filename,struct FileHeader *fh){
+	puts("---------------------------------------");
+	printf("File: %s \nHeader File Information\n",filename);	
+	puts("---------------------------------------");
+	printf("File magicValue: P%i\n",fh->magicValue);
+	printf("Image Width: %i\n",fh->imageWidth);
+	printf("Image Height: %i\n",fh->imageHeight);
+	if (fh->magicValue > 1){
+		printf("Max Gray: %i\n",fh->maxGrey);
+	}
+	puts("---------------------------------------");
 }
-void listfileHeader(struct FileHeader fh){
-	puts("---------------------------------------\n");
-	printf("File magicValue: P%i\nImage Width: %i\nImage Height: %i\nMax Gray: %i\n",fh.magicValue,fh.imageWidth,fh.imageHeight,fh.maxGrey);
-	puts("---------------------------------------\n");
-}
-void fillHeader(struct FileHeader fh, int value){
-
-	if (fh.magicValue == 0){
-		fh.magicValue = value;
-			printf("\n\t>>>> [MV][%i] <<<<\n",value);
-	}else if(fh.imageWidth == 0){
-		fh.imageWidth = value;
-				printf("\n\t>>>> [IW][%i] <<<<\n",value);
-	}else if(fh.imageHeight == 0){
-		fh.imageHeight = value;
-		fh.isFilled = (fh.magicValue == 1)?1:0;
-				printf("\n\t>>>> [IH][%i] <<<<\n",value);
-	}else if(fh.maxGrey == 0){
-		fh.maxGrey = value;	
-		fh.isFilled = (fh.magicValue > 1)?1:0;
-				printf("\n\t>>>> [MF][%i] <<<<\n",value);
+void fillHeader(struct FileHeader *fh, int value){
+	if (fh->magicValue == 0){
+		fh->magicValue = value;
+	}else if(fh->imageWidth == 0){
+		fh->imageWidth = value;
+	}else if(fh->imageHeight == 0){
+		fh->imageHeight = value;
+		fh->isFilled = (fh->magicValue == 1)?1:0;
+	}else if(fh->maxGrey == 0){
+		fh->maxGrey = value;	
+		fh->isFilled = (fh->magicValue > 1)?1:0;
 	}
 }
 
 
-int processFile(char *filename, struct FileHeader fhp) {
+int processFile(char *filename, struct FileHeader *fhp) {
 	int chars=0;
 	int ignore=false;
 	int parsedInt=0;
 	int c=0;
 	FILE *fp=fopen(filename,"r");
 	initFileHeader(fhp);
-	while((fhp.isFilled == 0) && (c=fgetc(fp))!= EOF){
-		putchar(c);
+	while((fhp->isFilled == 0) && (c=fgetc(fp))!= EOF){
 		switch(c){
 			case '#':
 				ignore = true;
@@ -64,7 +60,6 @@ int processFile(char *filename, struct FileHeader fhp) {
 					fillHeader(fhp,parsedInt);
 					parsedInt=0;
 				}
-				
 				break;
 			case '\t':
 			case ' ' :
@@ -75,9 +70,12 @@ int processFile(char *filename, struct FileHeader fhp) {
 				break;
 			case '\r':			
 			case '\n':
+				if ((ignore == false) && parsedInt > 0){
+					fillHeader(fhp,parsedInt);
+				}
+				parsedInt=0;
 				ignore = false;
 				break;
-			case 'P':
 			default:
 				if ((ignore == false) && c > 47 && c < 58){
 					parsedInt = parsedInt*10+(c-48);
@@ -94,16 +92,16 @@ int processFile(char *filename, struct FileHeader fhp) {
 
 
 int main(int argc, char *argv[]) {
-    struct FileHeader fhd = { 0 , 0 , 0 , 0};
+    struct FileHeader fhp;
     if (argc == 1) {
         puts("Need at least one argument to be processed!");
         return UNSUCCESS;
     }
     while ((argc-1) > 0) {
         argc--;
-	printf("%s\n",argv[argc]);
-	processFile(argv[argc],fhd);
-	listfileHeader(fhd);
+	processFile(argv[argc],&fhp);
+	listfileHeader(argv[argc],&fhp);	
+
     }
 
 return SUCCESS;
