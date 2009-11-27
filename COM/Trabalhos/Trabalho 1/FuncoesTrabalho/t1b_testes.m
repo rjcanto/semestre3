@@ -14,10 +14,10 @@ function [] = t1b_testes()
     %Quanto maior a frequencia mais rápido o som  se torna mais agudo, quanto menor, mais
     %lento, som mais grave.
     %Fase:
-    %
-    A_test=1;
-    frq_test=263.61;
-    sec=1;
+    %Não foi notada diferença
+    A_test=2;
+    frq_test=440;
+    sec=0.5;
     ph=0;
     %Teste de Amplitude
     fprintf('Teste de Amplitude.\n');
@@ -25,12 +25,32 @@ function [] = t1b_testes()
         t1_nota(A,frq_test,sec,ph);
     end
     pause(2);
-    fprintf('Teste de Frequencia.\n');
+
     %Teste de Frequencia
-    for frq_test=1:12
-        t1_nota(A_test,440*power(2,(frq_test/12)),sec,ph);
+    fprintf ('##########################################\n');
+    fprintf (' Teste ao nivel de frequencia mínima audivel.\n');
+    fprintf ('##########################################\n');
+    fprintf('Frequencia: ');
+    for frq_test=1:30
+        fprintf(' %i ',frq_test);
+        [s,fs]=t1_nota(A_test,frq_test,sec,ph);
+        sound(s,fs);
     end
-    pause(2);
+    fprintf('\n');
+    
+    fprintf ('##########################################\n');
+    fprintf (' Teste ao nivel de frequencia máxima audivel.\n');
+    fprintf ('##########################################\n');
+    fprintf('Frequencia: ');
+    for frq_test=1:30
+        x=19000 + 1000*frq_test;
+        [s,fs]=t1_nota(A_test,x,sec,ph);
+        fprintf(' [%i <-> %i] ',x,fs);
+        sound(s,FS);
+    end
+     fprintf('\n');
+    
+
     fprintf('Teste de Fase.\n');
     %Teste de Fase
     frq_test=263.61;

@@ -8,24 +8,15 @@
 %Desvantagem: Não deve ser utilizado por métodos que necessitem de entradas
 %de sinal do tipo "ruido branco".
 
-function [] = t1c()
+function t1c()
     close all; 
-    %recebe um sinal.
-    [signal,fs]=t1_nota(2,440,1,pi/4);
-    %efectuado um varrimento ao sinal
-    t=0:0.001:0.01;
+    %Escollha de uma frequencia de amostragem
+    fs=1000;
+    %efectuado um varrimento ao sinal em 1 segundo
+    t=0:1/fs:1;
     s_chirp=chirp(t,fs);
     %efectuado a analisys do sinal anterior.
     figure
-    analysis(s_chirp,fs);s
-    y=s_chirp*signal;
-    figure
-    analysis(y,fs);
-    
-    %Gráficos Gerados:
-    %Gráfico de Vector:
-    %Verifica-se o desempenho do sinal ao longo do tempo.
-    %Grafico de Espectro:
-    %Grafico de Espectrograma:
-    
+    analysis(s_chirp,fs);
 end
+

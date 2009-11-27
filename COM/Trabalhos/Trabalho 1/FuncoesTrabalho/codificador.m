@@ -1,21 +1,16 @@
-function [FS,mySignal] = codificador(signal,A,B)
+function [FS,mySignal,t] = codificador(signal,A,B,fo)
 	if(nargin == 0)
-		printf("Ã‰ necessÃ¡rio mais argumentos.\n");
+		printf('É necessário mais argumentos.\n');
 		return;
-	elseif(nargin >3)
-		printf("TÃªm argumentos a mais.\n");
+	elseif(nargin >4)
+		printf('Têm argumentos a mais.\n');
 		return;
 	end
 	
-	fo=10;
 	Amp=5;
-	[FS,Xt,nXt]=NRZ(signal,Amp,fo);
-	FS=FS*length(signal)-1;
-	t=0:1/FS:1;
-	aT=cos(2*pi*fo*t);
-
-	x1T = Xt  .*(A* aT);
-	x2T = nXt  .*(B* aT);
+	[FS,Xt,nXt,n]=NRZ(signal,Amp,fo);
+	t=0:1/(FS-1):1;
+	x1T = modula(Xt,A,fo,t);
+	x2T = modula(nXt,B,fo,t);
 	mySignal=x1T + x2T;
-
 end
