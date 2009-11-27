@@ -13,10 +13,10 @@
 % Retorna:
 %      um vector com sinal contido no ficheiro / ou vector passado por
 %      parametro
-function x = analysis( filenameOrVector , Fs)
+function x = analysis( filenameOrVector , gravaImagem)
 
 % Testar se e' string (nome de ficheiro) ou vector.
-if ischar(filenameOrVector)
+if isstr(filenameOrVector)
     
     filename = filenameOrVector;
     
@@ -30,7 +30,7 @@ else
     x = filenameOrVector;
     
     % Assumir os valores de Fs e n.
-    %Fs = 8000;
+    Fs = 8000;
     n = 8;
     fprintf('Vector. Assume-se Fs=%d e n=%d bit/amostra \n', Fs, n );    
     filename = 'Vector';
@@ -62,10 +62,10 @@ specgram( x , 256, Fs);
 grid on; title('Espectrograma'); 
 xlabel('Tempo [seg]'); ylabel('Frequencia [Hz]');
 
-%if (gravaImagem==1)
+if (gravaImagem==1)
     % Escrever a figura num ficheiro JPEG.
-%    print( gcf, '-djpeg100', strcat(strtok( filename, '.'),'.jpg') );
-%end
+    print( gcf, '-djpeg100', strcat(strtok( filename, '.'),'.jpg') );
+end
 
 return;
         

@@ -4,16 +4,18 @@
 %analysis, bem como a outros testes, identifique o tipo de filtragem 
 %realizado por este sistema.
 
-function [] = t1d()
-    close all;
-    x=wavread('fala1.wav');
-    y=(1/3)*x + (1/3)*(x - 1) + (1/3)*(x - 2);
-    %reduzir a amplitude e adicionar o mesmo sinal com 
+function [] = t1d(signal)
+    %close all;
+    [x,fs]=wavread(signal);
+    y=(1/3)*[x;0;0] + (1/3)*[0;x;0] + (1/3)*[0;0;x];
+
+    %reduzir a amplitude e adicionar o mesmo sinal com atraso
+    %provoca distroção do sinal e perca de nitidez
+    %
+    %No grafico nota-se que existe uma componente DC no sinal.
     figure;
-    analysis(x,0);
+    analysis(x,fs);
 
     figure;
-    analysis(y,0);
-
-    
+    analysis(y,fs);
 end

@@ -4,11 +4,16 @@
 %analysis, bem como a outros testes, identifique o tipo de filtragem 
 %realizado por este sistema.
 
-function [] = t1d()
+function [] = t1d(signal)
+    if(nargin ~= 1)
+        fprintf('Necessita de colocar um sinal de entrada');
+        
+        return
+    end
     close all;
-    [x,fs]=wavread('fala1.wav');
+    [x,fs]=wavread(signal);
     y=(1/3)*[x;0;0] + (1/3)*[0;x;0] + (1/3)*[0;0;x];
-    wavplay(y,fs);
+
     %reduzir a amplitude e adicionar o mesmo sinal com atraso
     %provoca distroção do sinal e perca de nitidez
     %
@@ -18,6 +23,4 @@ function [] = t1d()
 
     figure;
     analysis(y,fs);
-
-    
 end
