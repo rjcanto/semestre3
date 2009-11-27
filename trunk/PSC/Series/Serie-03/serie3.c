@@ -1,9 +1,16 @@
+/**
+ * Terceira série de exercícios - Inverno de 2009/10
+ * Grupo 1:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
+ * 
+ */
 #include <stdio.h>
 #define LINE_MAX 1024;
 #define SUCCESS 0;
 #define UNSUCCESS 1;
 enum boolean {false,true};
-/*private char string[LINE_MAX];*/
 struct FileHeader{
 	int magicValue;
 	int imageWidth;
@@ -11,13 +18,23 @@ struct FileHeader{
 	int maxGrey;
 	int isFilled;
 };
+
+/*
+ * void initFileHeader(struct FileHeader *fh);
+ * Função que vai inicializar os valores do objecto FileHeader
+ */
 void initFileHeader(struct FileHeader *fh){
 	fh->magicValue=0;
 	fh->imageWidth=0;
 	fh->imageHeight=0;
 	fh->maxGrey=0;
-	fh->isFilled=0;
+	fh->isFilled=false;
 }
+
+/*
+ * void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars)
+ * Lista os conteudos do FileHeader.
+ */
 void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars){
 	puts("---------------------------------------");
 	printf("File: %s \nHeader File Information\n",filename);	
@@ -31,6 +48,15 @@ void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars){
 	printf("Nbr of chars read: %i\n",nbrChars);	
 	puts("---------------------------------------");
 }
+
+/*
+ * void fillHeader(struct FileHeader *fh, int value)
+ * Função que preenche o header.
+ * Dadas as caracteristicas do ficheiro, os dados vão ser preenchidos
+ * pela ordem de chegada.
+ * Existe uma atenção especial ao MagicValue para o preenchimento do valor
+ * do MaxGray.
+ */ 
 void fillHeader(struct FileHeader *fh, int value){
 	if (fh->magicValue == 0){
 		fh->magicValue = value;
@@ -45,57 +71,52 @@ void fillHeader(struct FileHeader *fh, int value){
 	}
 }
 
-
-int processFile(char *filename, struct FileHeader *fhp) {
+/*
+ * int processFileHeader(char *filename, struct FileHeader *fhp) 
+ * Processa a informação constante no bloco de dados referente à descri-
+ * ção do ficheiro preenchendo a estrutura do Header do Ficheiro.
+ * Retorna o numero de caracteres lidos, até chegar ao bloco do Bitmap.
+ */
+int processFileHeader(char *filename, struct FileHeader *fhp) {
 	int chars=0;
 	int ignore=false;
 	int parsedInt=0;
+	int isHeaderBlockFinished=false;
 	int c=0;
 	FILE *fp=fopen(filename,"r");
 	initFileHeader(fhp);
-	while((fhp->isFilled == 0) && (c=fgetc(fp))!= EOF){
+	while((isHeaderBlockFinished==false) && (c=fgetc(fp))!= EOF  ){
 		switch(c){
 			case '#':
-				ignore = true;
-				if (parsedInt > 0){
-					fillHeader(fhp,parsedInt);
-					parsedInt=0;
-				}
-				break;
 			case '\t':
 			case ' ' :
-				if ((ignore == false) && parsedInt > 0){
-					fillHeader(fhp,parsedInt);
-					parsedInt=0;
-				}
-				break;
 			case '\r':			
 			case '\n':
-				if ((ignore == false) && parsedInt > 0){
-					fillHeader(fhp,parsedInt);
-				}
+				if ((ignore == false) && parsedInt > 0){fillHeader(fhp,parsedInt);}
+	 			ignore = (c == '\n' || c == '\t')?false:(c == '#')?true:ignore;
 				parsedInt=0;
-				ignore = false;
 				break;
 			default:
-				if ((ignore == false) && c > 47 && c < 58){
-					parsedInt = parsedInt*10+(c-48);
+				if ((ignore == false)){
+					if (fhp->isFilled == true) {
+						isHeaderBlockFinished=true;
+						chars--;
+						break;
+					}
+					if( c > 47 && c < 58){parsedInt = parsedInt*10+(c-48);}
 				}
 			break;
 		}
 		chars++;
 	}
-	while ((c=fgetc(fp))< 48 || c>57){
-		chars++;
-	}
-
 	fclose(fp);
-
  return chars;
 }
 
 
-
+/*
+ * Processa multiplos ficheiros de entrada. Necessita de pelo menos 1.
+ * */
 int main(int argc, char *argv[]) {
     struct FileHeader fhp;
     int nbrChars=0;
@@ -105,7 +126,7 @@ int main(int argc, char *argv[]) {
     }
     while ((argc-1) > 0) {
         argc--;
-	nbrChars=processFile(argv[argc],&fhp);
+	nbrChars=processFileHeader(argv[argc],&fhp);
 	listfileHeader(argv[argc],&fhp,nbrChars);	
 
     }
