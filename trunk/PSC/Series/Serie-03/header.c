@@ -13,7 +13,7 @@
  * Processa multiplos ficheiros de entrada. Necessita de pelo menos 1.
  * */
 int main(int argc, char *argv[]) {
-    struct FileHeader fhp;
+    header fhp;
     int nbrChars=0;
     if (argc == 1) {
         puts("Need at least one argument to be processed!");

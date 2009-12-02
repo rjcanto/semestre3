@@ -6,6 +6,7 @@
  * -> 33595: Nuno Sousa
  * 
  */
+
 #include <stdio.h>
 #include "imageFormat.h"
 #include "mylib.h"
