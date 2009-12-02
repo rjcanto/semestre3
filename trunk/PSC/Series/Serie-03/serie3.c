@@ -8,10 +8,7 @@
  */
 #include <stdio.h>
 #include "imageFormat.h"
-/*#define SUCCESS 0;
-#define UNSUCCESS 1;
-enum boolean {false,true};*/
-
+#include "myLib.h"
 /*
  * Processa multiplos ficheiros de entrada. Necessita de pelo menos 1.
  * */
@@ -24,9 +21,8 @@ int main(int argc, char *argv[]) {
     }
     while ((argc-1) > 0) {
         argc--;
-	nbrChars=processFileHeader(argv[argc],&fhp);
-	listfileHeader(argv[argc],&fhp,nbrChars);	
-
+		nbrChars=processFileHeader(argv[argc],&fhp);
+		listfileHeader(argv[argc],&fhp,nbrChars);	
     }
 
 return SUCCESS;

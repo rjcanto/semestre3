@@ -8,11 +8,9 @@
  */
 #include <stdio.h>
 #include "imageFormat.h"
-#define LINE_MAX 1024;
-#define SUCCESS 0;
-#define UNSUCCESS 1;
-enum boolean {false,true};
+#include "mylib.h"
 
+#define LINE_MAX 1024;
 /*
  * void initFileHeader(struct FileHeader *fh);
  * Função que vai inicializar os valores do objecto FileHeader
