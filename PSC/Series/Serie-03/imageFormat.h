@@ -6,17 +6,17 @@
  * -> 33595: Nuno Sousa
  * 
  */
-#ifndef imageFormat.h
-/*
-#define
-*/
-struct FileHeader{
+
+#ifndef IMAGEFORMAT_H
+#define IMAGEFORMAT_H
+
+typedef struct FileHeader{
 	int magicValue;
 	int imageWidth;
 	int imageHeight;
 	int maxGrey;
 	int isFilled;
-};
+} header;
 
 void initFileHeader(struct FileHeader *fh);
 
