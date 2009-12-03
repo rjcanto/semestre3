@@ -1,9 +1,21 @@
+/* zpipe.c: example of proper use of zlib's inflate() and deflate()
+   Not copyrighted -- provided to the public domain
+   Version 1.4  11 December 2005  Mark Adler */
+
+/* Version history:
+   1.0  30 Oct 2004  First version
+   1.1   8 Nov 2004  Add void casting for unused return values
+                     Use switch statement for inflate() return values
+   1.2   9 Nov 2004  Add assertions to document zlib guarantees
+   1.3   6 Apr 2005  Remove incorrect assertion in inf()
+   1.4  11 Dec 2005  Add hack to avoid MSDOS end-of-line conversions
+                     Avoid some compiler warnings for input and output buffers
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "mylib.h"
 #include "zlib.h"
-
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
@@ -13,11 +25,15 @@
 #  define SET_BINARY_MODE(file)
 #endif
 
+#define CHUNK 16384
 
-#define KBYTES 1024
-#define CHUNK 128*KBYTES
-
-int my_compress(FILE *source, FILE *dest, int level)
+/* Compress from file source to file dest until EOF on source.
+   def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
+   allocated for processing, Z_STREAM_ERROR if an invalid compression
+   level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
+   version of the library linked do not match, or Z_ERRNO if there is
+   an error reading or writing the files. */
+int def(FILE *source, FILE *dest, int level)
 {
     int ret, flush;
     unsigned have;
@@ -67,8 +83,13 @@ int my_compress(FILE *source, FILE *dest, int level)
     return Z_OK;
 }
 
-
-int my_decompress(FILE *source, FILE *dest)
+/* Decompress from file source to file dest until stream ends or EOF.
+   inf() returns Z_OK on success, Z_MEM_ERROR if memory could not be
+   allocated for processing, Z_DATA_ERROR if the deflate data is
+   invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
+   the version of the library linked do not match, or Z_ERRNO if there
+   is an error reading or writing the files. */
+int inf(FILE *source, FILE *dest)
 {
     int ret;
     unsigned have;
@@ -125,8 +146,9 @@ int my_decompress(FILE *source, FILE *dest)
     (void)inflateEnd(&strm);
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
+
 /* report a zlib or i/o error */
-void my_errors(int ret)
+void zerr(int ret)
 {
     fputs("zpipe: ", stderr);
     switch (ret) {
@@ -149,48 +171,35 @@ void my_errors(int ret)
         fputs("zlib version mismatch!\n", stderr);
     }
 }
-void progUsage(char *program){
-	printf("%s usage: %s -[c,d] source dest\n",program,program);
-}
+
+/* compress or decompress from stdin to stdout */
 int main(int argc, char **argv)
 {
     int ret;
-    FILE *input_file=fopen(argv[2],"rb");
-    FILE *output_file=fopen(argv[3],"wb");
-    
-/*    SET_BINARY_MODE(stdin);
+
+    /* avoid end-of-line conversions */
+    SET_BINARY_MODE(stdin);
     SET_BINARY_MODE(stdout);
-*/
-/*    switch (argc){
-		case 3:
-			input_file=argv[2];
-			output_file="";
-			if (strcmp(argv[1], "-c") == 0){
-				strcpy(output_file,strcat(input_file,".compressed"));
-			}else if (strcmp(argv[1], "-d") == 0){
-				strcpy(output_file,strcat(input_file,".uncompressed"));
-			}else{
-				progUsage(argv[0]);
-				return UNSUCCESS;
-			}
-		case 4:
-			output_file=(argc == 3)?output_file:argv[3];*/
-			if (strcmp(argv[1], "-c") == 0){
-				ret = my_compress(input_file, output_file, Z_DEFAULT_COMPRESSION);
-			}else if (strcmp(argv[1], "-d") == 0){
-				ret = my_decompress(input_file, output_file);
-			}else{
-				progUsage(argv[0]);
-				return UNSUCCESS;
-			}
-			if (ret != Z_OK)
-				my_errors(ret);
-			return ret;/*
-		default:
-			progUsage(argv[0]);
-			return UNSUCCESS;
-	}*/
-	fclose(output_file);
-	fclose(input_file);
-	
+
+    /* do compression if no arguments */
+    if (argc == 1) {
+        ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
+        if (ret != Z_OK)
+            zerr(ret);
+        return ret;
+    }
+
+    /* do decompression if -d specified */
+    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
+        ret = inf(stdin, stdout);
+        if (ret != Z_OK)
+            zerr(ret);
+        return ret;
+    }
+
+    /* otherwise, report usage */
+    else {
+        fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
+        return 1;
+    }
 }
