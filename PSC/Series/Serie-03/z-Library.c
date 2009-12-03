@@ -1,21 +1,17 @@
+#ifndef STDIO_DEF
+#define STDIO_DEF
 #include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "mylib.h"
-#include "zlib.h"
-
-
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
-#  include <fcntl.h>
-#  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
-
-
-#define KBYTES 1024
-#define CHUNK 128*KBYTES
+#endif	
+#include "z-Library.h"
+typedef int boolean;
+/*enum boolean {false,true};*/
+typedef struct cmdLnArgs{
+		char action;
+		FILE * source;
+		FILE * destination;
+		int compressLevel;
+		boolean ready;
+} Args;
 
 int my_compress(FILE *source, FILE *dest, int level)
 {
@@ -152,12 +148,58 @@ void my_errors(int ret)
 void progUsage(char *program){
 	printf("%s usage: %s -[c,d] source dest\n",program,program);
 }
+
+
 int main(int argc, char **argv)
 {
-    int ret;
-    FILE *input_file=fopen(argv[2],"rb");
-    FILE *output_file=fopen(argv[3],"wb");
+    int ret=0;
+    int idx=1;
+/*    FILE *input_file;=fopen(argv[2],"rb");*/
+/*    FILE *output_file;=fopen(argv[3],"wb");*/
+    /*struct Args myLineArgs;*/
+    /*Process Arguments*/
     
+    while (idx < argc){
+		if ((char)argv[idx][0] == '-'){
+			switch ((char)argv[idx][1]){
+				case 'c':
+					printf("Compress: %s \n",argv[idx]);
+					break;
+				case 'd':
+					printf("Decompress: %s \n",argv[idx]);
+					break;
+				case 'l':
+					printf("Compress Level: %s \n",argv[idx]);
+					break;
+				default:
+					printf("Invalid Option: %s \n",argv[idx]);
+					break;
+			}
+		}else{
+			switch (((int)(argc -  idx))){
+				case 1:
+					puts("Tem um argumentos, que assumo sejam os ficheiros de ");
+					return SUCCESS;
+					break;
+				case 2:
+					puts("Tem dois argumentos, que assumo sejam os ficheiros de ");
+					return SUCCESS;
+					break;
+				default:
+					printf("%d\n",idx);
+					return UNSUCCESS;
+					break;
+			}
+		}
+		idx++;
+	}
+    
+
+    
+
+
+
+
 /*    SET_BINARY_MODE(stdin);
     SET_BINARY_MODE(stdout);
 */
@@ -174,7 +216,8 @@ int main(int argc, char **argv)
 				return UNSUCCESS;
 			}
 		case 4:
-			output_file=(argc == 3)?output_file:argv[3];*/
+			output_file=(argc == 3)?output_file:argv[3];
+
 			if (strcmp(argv[1], "-c") == 0){
 				ret = my_compress(input_file, output_file, Z_DEFAULT_COMPRESSION);
 			}else if (strcmp(argv[1], "-d") == 0){
@@ -185,12 +228,12 @@ int main(int argc, char **argv)
 			}
 			if (ret != Z_OK)
 				my_errors(ret);
-			return ret;/*
+			return ret;
 		default:
 			progUsage(argv[0]);
 			return UNSUCCESS;
 	}*/
-	fclose(output_file);
-	fclose(input_file);
-	
+/*	fclose(output_file);
+	fclose(input_file);*/
+	return ret;
 }
