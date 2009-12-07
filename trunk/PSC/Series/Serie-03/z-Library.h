@@ -40,4 +40,16 @@ int my_decompress(FILE *source, FILE *dest);
 void my_errors(int ret);
 
 void progUsage(char *program);
+
+typedef unsigned char boolean;
+
+enum action {compress_action,decompress_action};
+
+typedef struct cmdLnArgs{
+		int action;
+		char * source;
+		char * destination;
+		int compressLevel;
+		boolean ready;
+}myArgs;
 #endif
