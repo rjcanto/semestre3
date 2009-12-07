@@ -3,15 +3,6 @@
 #include <stdio.h>
 #endif	
 #include "z-Library.h"
-typedef int boolean;
-/*enum boolean {false,true};*/
-typedef struct cmdLnArgs{
-		char action;
-		FILE * source;
-		FILE * destination;
-		int compressLevel;
-		boolean ready;
-} Args;
 
 int my_compress(FILE *source, FILE *dest, int level)
 {
@@ -145,56 +136,103 @@ void my_errors(int ret)
         fputs("zlib version mismatch!\n", stderr);
     }
 }
+
 void progUsage(char *program){
-	printf("%s usage: %s -[c,d] source dest\n",program,program);
+	puts("--------------------------------------------------------------------------------");
+	printf("Usage: \n%s -[c,d] -l [0-9] source [dest]\n",program);
+	puts("--------------------------------------------------------------------------------");
+	puts("-c : compress");
+	puts("-d : decompress");
+	puts("-l : compress level");
+	puts("\t[0-9] : 0- arquive, 9- maximum compress.");
+	puts("source: source file");
+	puts("destination: destination file. It's optional. Case ignored destination file:");
+	puts("\twhile compress: end with the extention source.z");
+	puts("\twhile decompress: end with the extention source.dz");
+	puts("--------------------------------------------------------------------------------");
 }
 
+void init_Args(struct cmdLnArgs *ma){
+	/*Setting defaults values*/
+	ma->action = compress_action;
+	ma->compressLevel = Z_DEFAULT_COMPRESSION;
+	ma->ready = false;
+}
 
-int main(int argc, char **argv)
-{
-    int ret=0;
-    int idx=1;
-/*    FILE *input_file;=fopen(argv[2],"rb");*/
-/*    FILE *output_file;=fopen(argv[3],"wb");*/
-    /*struct Args myLineArgs;*/
-    /*Process Arguments*/
-    
+int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
+	int idx=1;
     while (idx < argc){
+		
 		if ((char)argv[idx][0] == '-'){
 			switch ((char)argv[idx][1]){
 				case 'c':
-					printf("Compress: %s \n",argv[idx]);
+					ma->action=compress_action;
 					break;
 				case 'd':
-					printf("Decompress: %s \n",argv[idx]);
+					ma->action=decompress_action;
 					break;
 				case 'l':
-					printf("Compress Level: %s \n",argv[idx]);
+					idx++;
+					printf("[%s] - [%d]\n",argv[idx],(*argv[idx] - '0'));
+					ma->compressLevel=*argv[idx] - '0';
 					break;
 				default:
 					printf("Invalid Option: %s \n",argv[idx]);
+					progUsage(argv[0]);
+					return UNSUCCESS;
 					break;
 			}
 		}else{
 			switch (((int)(argc -  idx))){
 				case 1:
-					puts("Tem um argumentos, que assumo sejam os ficheiros de ");
+					ma->source=argv[idx];
+					ma->destination=0;
+					ma->ready = true;
 					return SUCCESS;
 					break;
 				case 2:
-					puts("Tem dois argumentos, que assumo sejam os ficheiros de ");
+					ma->source=argv[idx++];
+					ma->destination=argv[idx];
+					ma->ready = true;
 					return SUCCESS;
 					break;
 				default:
-					printf("%d\n",idx);
+					puts("Invalid source/destination files.\n");
+					progUsage(argv[0]);
 					return UNSUCCESS;
 					break;
 			}
 		}
 		idx++;
 	}
-    
+	return UNSUCCESS;
+	
+}
 
+void printArgs(struct cmdLnArgs *arg){
+		puts("--------------------------------------------------------------------------------");
+		printf("[Action]:%i\n",arg->action);
+		printf("[Compress Level]:%i\n",arg->compressLevel);
+		printf("[Source]:%s\n",arg->source);
+		printf("[Destination]:%s\n",arg->destination);
+		printf("[Ready]:%i\n",arg->ready);
+		puts("--------------------------------------------------------------------------------");
+}
+
+int main(int argc, char **argv)
+{
+    int ret=0;
+    myArgs myargs;
+    if(argc == 1){
+		progUsage(argv[0]);
+		return UNSUCCESS;
+	}
+
+	init_Args(&myargs);
+	ret=parseArgs(&myargs,argc,argv);
+    printArgs(&myargs);
+
+	
     
 
 
@@ -210,7 +248,7 @@ int main(int argc, char **argv)
 			if (strcmp(argv[1], "-c") == 0){
 				strcpy(output_file,strcat(input_file,".compressed"));
 			}else if (strcmp(argv[1], "-d") == 0){
-				strcpy(output_file,strcat(input_file,".uncompressed"));
+		 		strcpy(output_file,strcat(input_file,".uncompressed"));
 			}else{
 				progUsage(argv[0]);
 				return UNSUCCESS;
