@@ -25,9 +25,10 @@ function [nota,fs] = t1_nota(a,fo,sec,ph)
     end
     %Frequencia de Amostragem (em Hz), taxa equivalente do sinal de telefone
     if (fo>2048)
-        fs=2.1*fo;
+        fs=100.1*fo;
     else
-        fs=4096;
+        %fs=4096;
+        fs=1000.1*fo;
     end
 
     n=1:1:fs*sec;

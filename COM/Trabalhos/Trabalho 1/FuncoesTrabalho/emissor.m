@@ -1,20 +1,14 @@
-function [yT,fs]= emissor()
-clear all;
-fo=100;
-fo2=20;
-fs=2.2*fo;
-t=0:1/(fs-1):1;
+function [yF,FS]= emissor(signal,Fo)
+    carrierFs=10000;
+    FS=2.2*carrierFs;
+    t=0:1/(FS-1):1;
 
-aT=cos(2*pi*fo*t);
-xT=(1+cos(2*pi*fo2*t));
-x2T=sinc(t);
-figure ;
-my_analysis(xT,fs);
+    %Sinal da Portadora
+    aT=cos(2*pi*carrierFs*t);
 
-yT=xT.*aT;
-y2T=x2T.*aT;
-figure ;
-my_analysis(yT,fs);
-figure;
-my_analysis(y2T,fs);
+    yT=aT.*signal;
+    yF=fft(yT);
+    
+    figure;
+    my_analysis(yT,FS); 
 end
