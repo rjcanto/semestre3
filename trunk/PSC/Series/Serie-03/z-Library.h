@@ -50,6 +50,6 @@ typedef struct cmdLnArgs{
 		char * source;
 		char * destination;
 		int compressLevel;
-		boolean ready;
+		boolean destParsed;
 }myArgs;
 #endif
