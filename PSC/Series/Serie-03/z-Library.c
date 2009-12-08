@@ -3,6 +3,9 @@
 #include <stdio.h>
 #endif	
 #include "z-Library.h"
+#include <stdlib.h>
+#define DEFAULT_EXT_NAME ".z"
+enum CMD_ERRORS{CMD_INVALID_EXT,CMD_INVALID_OPTION,CMD_INVALID_FILES};
 
 int my_compress(FILE *source, FILE *dest, int level)
 {
@@ -137,6 +140,19 @@ void my_errors(int ret)
     }
 }
 
+void my_cmdErrors(int ret){
+	fputs("Comand Line Errors: ", stderr);
+	switch(ret){
+		 case CMD_INVALID_EXT:
+			fputs("Not Know Extention\n", stderr);
+		 case CMD_INVALID_FILES:
+			fputs("Invalid source/destination files\n", stderr);
+			break;
+		 case CMD_INVALID_OPTION:
+			fputs("Invalid Option\n", stderr);
+			break;
+	}
+}
 void progUsage(char *program){
 	puts("--------------------------------------------------------------------------------");
 	printf("Usage: \n%s -[c,d] -l [0-9] source [dest]\n",program);
@@ -156,7 +172,7 @@ void init_Args(struct cmdLnArgs *ma){
 	/*Setting defaults values*/
 	ma->action = compress_action;
 	ma->compressLevel = Z_DEFAULT_COMPRESSION;
-	ma->ready = false;
+	ma->destParsed = false;
 }
 
 int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
@@ -173,13 +189,13 @@ int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
 					break;
 				case 'l':
 					idx++;
-					printf("[%s] - [%d]\n",argv[idx],(*argv[idx] - '0'));
 					ma->compressLevel=*argv[idx] - '0';
 					break;
 				default:
-					printf("Invalid Option: %s \n",argv[idx]);
+					printf("%s \n",argv[idx]);
+					my_cmdErrors(CMD_INVALID_OPTION);
 					progUsage(argv[0]);
-					return UNSUCCESS;
+					return false;
 					break;
 			}
 		}else{
@@ -187,25 +203,23 @@ int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
 				case 1:
 					ma->source=argv[idx];
 					ma->destination=0;
-					ma->ready = true;
-					return SUCCESS;
+					return true;
 					break;
 				case 2:
 					ma->source=argv[idx++];
 					ma->destination=argv[idx];
-					ma->ready = true;
-					return SUCCESS;
+					return true;
 					break;
 				default:
-					puts("Invalid source/destination files.\n");
+					my_cmdErrors(CMD_INVALID_FILES);
 					progUsage(argv[0]);
-					return UNSUCCESS;
+					return false;
 					break;
 			}
 		}
 		idx++;
 	}
-	return UNSUCCESS;
+	return false;
 	
 }
 
@@ -215,14 +229,55 @@ void printArgs(struct cmdLnArgs *arg){
 		printf("[Compress Level]:%i\n",arg->compressLevel);
 		printf("[Source]:%s\n",arg->source);
 		printf("[Destination]:%s\n",arg->destination);
-		printf("[Ready]:%i\n",arg->ready);
+		printf("[DestParsed]:%i\n",arg->destParsed);
 		puts("--------------------------------------------------------------------------------");
+}
+void cleanNewFileName(char * destination){
+		free(destination);
+}
+/**
+ * Na ausência do ficheiro de destino, gera o seu nome como:
+ * :: Na realização da compressão
+ * ficheiro_origem.DEFAULT_EXT_NAME (.z)
+ * :: Na realização da descompressão
+ * ficheiro_origem.SEM DEFAULT_EXT_NAME (sem .z)
+ * 
+ * No Caso da extensão não ser conhecida não realiza a operação.
+ * */
+unsigned int  newOutputFile(struct cmdLnArgs *myargs, char *outputfile){
+	int sizeOfExt=0;
+	int equal=0; 
+		sizeOfExt=(myargs->action == compress_action)?strlen(myargs->source)+strlen(DEFAULT_EXT_NAME):strlen(myargs->source)-strlen(DEFAULT_EXT_NAME);
+		
+		outputfile=(char *)malloc(sizeof(char)*(sizeOfExt));
+		if (outputfile == NULL){
+			my_errors(Z_MEM_ERROR);
+			return false;
+		}	
+		if (myargs->action == compress_action){
+			myargs->destination=strcpy(outputfile,myargs->source);
+			myargs->destination=strcat(outputfile,DEFAULT_EXT_NAME);
+		}else{
+			equal=strcmp(&(myargs->source[sizeOfExt]),DEFAULT_EXT_NAME);
+			if(equal){
+					my_cmdErrors(CMD_INVALID_EXT);
+					return false;
+			}
+			
+			myargs->destination=strncpy(outputfile,myargs->source,sizeOfExt);
+		}	
+		return true;
 }
 
 int main(int argc, char **argv)
 {
     int ret=0;
     myArgs myargs;
+    char * outputfile=0;
+    FILE *sourceFile;
+    FILE *destinationFile;
+    
+    
     if(argc == 1){
 		progUsage(argv[0]);
 		return UNSUCCESS;
@@ -230,48 +285,51 @@ int main(int argc, char **argv)
 
 	init_Args(&myargs);
 	ret=parseArgs(&myargs,argc,argv);
-    printArgs(&myargs);
-
-	
+    if (ret == false) {
+		progUsage(argv[0]);
+		return UNSUCCESS;
+	}
     
-
-
-
-
-/*    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
-*/
-/*    switch (argc){
-		case 3:
-			input_file=argv[2];
-			output_file="";
-			if (strcmp(argv[1], "-c") == 0){
-				strcpy(output_file,strcat(input_file,".compressed"));
-			}else if (strcmp(argv[1], "-d") == 0){
-		 		strcpy(output_file,strcat(input_file,".uncompressed"));
-			}else{
-				progUsage(argv[0]);
-				return UNSUCCESS;
-			}
-		case 4:
-			output_file=(argc == 3)?output_file:argv[3];
-
-			if (strcmp(argv[1], "-c") == 0){
-				ret = my_compress(input_file, output_file, Z_DEFAULT_COMPRESSION);
-			}else if (strcmp(argv[1], "-d") == 0){
-				ret = my_decompress(input_file, output_file);
-			}else{
-				progUsage(argv[0]);
-				return UNSUCCESS;
-			}
-			if (ret != Z_OK)
-				my_errors(ret);
-			return ret;
-		default:
-			progUsage(argv[0]);
+	
+	if (myargs.destination == NULL){
+		ret=newOutputFile(&myargs,outputfile);
+		if (ret == false){
 			return UNSUCCESS;
-	}*/
-/*	fclose(output_file);
-	fclose(input_file);*/
+		}
+		myargs.destParsed=true;
+	}
+
+ 
+
+	/**
+	 * Processamento do ficheiro
+	 **/
+	sourceFile=fopen(myargs.source,"rb");
+	destinationFile=fopen(myargs.destination,"wr");
+	SET_BINARY_MODE(sourceFile);
+	SET_BINARY_MODE(destinationFile);
+
+
+	printf("Processing file: %s into %s ...", myargs.source,myargs.destination);
+	if (myargs.action == compress_action){
+		ret = my_compress(sourceFile,destinationFile, myargs.compressLevel);
+	}else{
+		ret = my_decompress(sourceFile, destinationFile);
+	}
+	if (ret != Z_OK){
+			printf("--- :::  ERROR. File not processed!\n");
+			my_errors(ret);
+			if(myargs.destParsed){
+				cleanNewFileName(outputfile);
+			}
+			
+			return UNSUCCESS;
+	}
+	printf(" ::: DONE File successufly processed!\n");
+
+
+	if(myargs.destParsed){
+		cleanNewFileName(outputfile);
+	}
 	return ret;
 }
