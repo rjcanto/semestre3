@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     while ((argc-1) > 0) {
         argc--;
 		nbrChars=processFileHeader(argv[argc],&fhp);
-		listfileHeader(argv[argc],&fhp,nbrChars);	
+		listFileHeader(argv[argc],&fhp,nbrChars);	
     }
 
 return SUCCESS;

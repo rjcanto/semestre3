@@ -20,11 +20,9 @@ typedef struct FileHeader{
 
 void initFileHeader(struct FileHeader *fh);
 
-void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars);
+void listFileHeader(char* filename,struct FileHeader *fh,int nbrChars);
  
 void fillHeader(struct FileHeader *fh, int value);
-
-int processFileHeader(char *filename, struct FileHeader *fhp);
 
 int processFileHeader(char *filename, struct FileHeader *fhp);
 
