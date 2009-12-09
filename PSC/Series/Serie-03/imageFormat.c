@@ -28,7 +28,7 @@ void initFileHeader(struct FileHeader *fh){
  * void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars)
  * Lista os conteudos do FileHeader.
  */
-void listfileHeader(char* filename,struct FileHeader *fh,int nbrChars){
+void listFileHeader(char* filename,struct FileHeader *fh,int nbrChars){
 	puts("---------------------------------------");
 	printf("File: %s \nHeader File Information\n",filename);	
 	puts("---------------------------------------");
