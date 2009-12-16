@@ -155,12 +155,14 @@ void my_cmdErrors(int ret){
 }
 void progUsage(char *program){
 	puts("--------------------------------------------------------------------------------");
-	printf("Usage: \n%s -[c,d] -l [0-9] source [dest]\n",program);
+	printf("Usage: \n%s -[c,d] -[l] [0-9] -[f] [0-5] source [dest]\n",program);
 	puts("--------------------------------------------------------------------------------");
 	puts("-c : compress");
 	puts("-d : decompress");
 	puts("-l : compress level");
 	puts("\t[0-9] : 0- arquive, 9- maximum compress.");
+	puts("-f : Filter type");
+	puts("\t[0-9] : 0- None, 1- Sub, 2- Up, 3- Average, 4- Paeth, 5-Best.");
 	puts("source: source file");
 	puts("destination: destination file. It's optional. Case ignored destination file:");
 	puts("\twhile compress: end with the extention source.z");
@@ -172,6 +174,7 @@ void init_Args(struct cmdLnArgs *ma){
 	/*Setting defaults values*/
 	ma->action = compress_action;
 	ma->compressLevel = Z_DEFAULT_COMPRESSION;
+	ma->filter = 0;
 	ma->destParsed = false;
 }
 
@@ -190,6 +193,10 @@ int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
 				case 'l':
 					idx++;
 					ma->compressLevel=*argv[idx] - '0';
+					break;
+				case 'f':
+					idx++;
+					ma->filter=*argv[idx] - '0';
 					break;
 				default:
 					printf("%s \n",argv[idx]);
@@ -226,6 +233,7 @@ int parseArgs(struct cmdLnArgs *ma, int argc, char **argv){
 void printArgs(struct cmdLnArgs *arg){
 		puts("--------------------------------------------------------------------------------");
 		printf("[Action]:%i\n",arg->action);
+		printf("[Filter]:%i\n",arg->filter);
 		printf("[Compress Level]:%i\n",arg->compressLevel);
 		printf("[Source]:%s\n",arg->source);
 		printf("[Destination]:%s\n",arg->destination);
