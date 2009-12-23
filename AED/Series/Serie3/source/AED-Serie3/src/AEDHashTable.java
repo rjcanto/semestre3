@@ -253,7 +253,7 @@ public class AEDHashTable<E> {
                         element = null;
                         tn = tn.next;
 
-                        throw new UnsupportedOperationException("Not supported yet.");
+                        
                     }
                 };
             }
