@@ -88,24 +88,23 @@ public class AEDTree<E> {
      * @return - Novo nó
      */
     public static Node<Integer> createBSTFromArithmeticProgression(int a, int r, int n) {
-        return BSTFAP(a, r, (n+1)/2, (n+(n+1)%2)/2);
+        return BSTFAP(a, r, n, n);
     }
 
     public static Node<Integer> BSTFAP(int a, int r, int n, int nEle) {
-        System.out.println("nElem :"+nEle+" n : "+n+" node : "+n);
-        if(r<=0 || nEle < 1|| n < 1  ) {
-            System.out.println("=>out");
+        if(r<=0 || nEle < 1|| n < 0  ) {
+            System.out.println("=>null");
             return null;
         }
-        
         //Novo Nó
-        
+        int mid=(n+n%2)/2 ;
+        int value=elementFromArithProg(a, mid, r);
 
-        int value=elementFromArithProg(a, n, r);
         Node<Integer> nN=new Node<Integer>(value);
-
-        nN.left=BSTFAP(a, r, n-(nEle/2+1), nEle/2 );
-        nN.right=BSTFAP(a, r,n+(nEle/2+1), nEle/2 );
+        System.out.println("nElem :"+nEle+" n : "+n+" node : "+mid);
+        int next=(n%2 == 0)?n-(nEle)/2 -1:n-(nEle +1 )/2;
+        nN.left =BSTFAP(a, r,next , (nEle - (n+1)%2)/2 );
+        nN.right=BSTFAP(a, r, n+(nEle + (n)%2 )/2 , nEle/2 );
         return nN;
     }
 
@@ -136,6 +135,6 @@ public class AEDTree<E> {
      * @param args
      */
     public static void main(String[] args) {
-       Node<Integer> n= createBSTFromArithmeticProgression(1, 1, 15);
+       Node<Integer> n= createBSTFromArithmeticProgression(1, 1, 23);
     }
 }
