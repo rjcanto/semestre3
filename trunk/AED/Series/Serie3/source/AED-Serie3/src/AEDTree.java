@@ -93,7 +93,6 @@ public class AEDTree<E> {
 
     public static Node<Integer> BSTFAP(int a, int r, int n, int nEle) {
         if(r<=0 || nEle < 1|| n < 0  ) {
-            System.out.println("=>null");
             return null;
         }
         //Novo Nó
@@ -101,7 +100,7 @@ public class AEDTree<E> {
         int value=elementFromArithProg(a, mid, r);
 
         Node<Integer> nN=new Node<Integer>(value);
-        System.out.println("nElem :"+nEle+" n : "+n+" node : "+mid);
+        System.out.println("\t\t Node :"+mid+" Value : "+nN.value);
         int next=(n%2 == 0)?n-(nEle)/2 -1:n-(nEle +1 )/2;
         nN.left =BSTFAP(a, r,next , (nEle - (n+1)%2)/2 );
         nN.right=BSTFAP(a, r, n+(nEle + (n)%2 )/2 , nEle/2 );
@@ -114,7 +113,16 @@ public class AEDTree<E> {
     }
 
     public static <E extends Comparable<E>> int rangeCount(Node<E> root, E l, E r) {
-        return 0;
+
+        if (l == null || r == null || root == null) return 0;
+
+        if (l.compareTo(root.value) >0){
+            return rangeCount(root.right, l, r);
+        }
+        if (r.compareTo(root.value) < 0){
+            return rangeCount(root.left, l, r);
+        }
+        return rangeCount(root.left, l, r) + rangeCount(root.right, l, r) +1;
     }
 
 
@@ -135,6 +143,9 @@ public class AEDTree<E> {
      * @param args
      */
     public static void main(String[] args) {
-       Node<Integer> n= createBSTFromArithmeticProgression(1, 1, 23);
+       Node<Integer> n= createBSTFromArithmeticProgression(1, 7, 23);
+
+
+       System.out.println("Nbr Elem: "+rangeCount(n, 29, 29));
     }
 }
