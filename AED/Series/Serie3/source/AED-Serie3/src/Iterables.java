@@ -9,7 +9,11 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 /**
- *
+ * A melhor solução para este problema seria manter o "histórico" de elementos
+ * retornados em forma de árvore binária ou mesmo utilizando a estrutura criada
+ * no primeiro exercicio.
+ * Por conhecer as soluções, melhores é que não alteramos a estrutura já 
+ * implementada.
  * 
  */
 public class Iterables {
