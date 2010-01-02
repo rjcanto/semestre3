@@ -1,14 +1,16 @@
+/**
+ * Grupo:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
+ *
+*/
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
- * @author nac
+ * 
  */
 public class Iterables {
 

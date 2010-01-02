@@ -1,8 +1,9 @@
 /**
+ * Grupo:
+ * -> 30896: Ricardo Canto
+ * -> 31401: Nuno Cancelo
+ * -> 33595: Nuno Sousa
  *
- * @author nac
- */
-/**
  *
  * Realize a classe contendo os seguintes métodos estáticos para a manipulação
  * de ávores. Assuma que cada objecto do tipo Node<E> tem 3 campos:
@@ -26,7 +27,18 @@ public class AEDTree<E> {
         return copyToArrayAux(root, v, 0);
     }
 
-    public static <E> int copyToArrayAux(Node<E> root, E[] v,int idx) {
+    /**
+     *
+     * @param <E>
+     * @param root
+     * @param v
+     * @param idx
+     * @return
+     *
+     *
+     * Método auxilizar para proceder a cópia.
+     */
+    private static <E> int copyToArrayAux(Node<E> root, E[] v,int idx) {
         if (idx >= v.length || root == null ) return 0;
 
         if (root.right != null)
@@ -46,40 +58,7 @@ public class AEDTree<E> {
      * factor d (diferença entre dois elementos consecutivos d).
      * Assuma que o factor d é maior do que zero. A árvore resultante deve
      * estar balanceada.
-     * Ex:
-     * (Indicies)
-     * Level 0:
-     * nEle=7
-     * mid=(nEle+1)/2=(7+1)/2=4
-     * ===========================
-     * Level 1 (Left):
-     * nEle=nEle - mid= 7 - 4 = 3
-     * mid=(nEle+1)/2=(3+1)/2=2
-     * Level 2 (Left):
-     * nEle=nEle - mid= 3 - 2 = 1
-     * mid=(nEle+1)/2=(1+1)/2=1
-     * Level 2 (Right):
-     * nEle=nEle + mid= 3 + 2 = 5
-     * mid=(nEle+1)/2=(5+1)/2=3
-     * ===========================
-     * Level 1 (Right):
-     * nEle=nEle + mid= 7 + 4 = 11
-     * mid=(nEle+1)/2=(11+1)/2=6
-     *
-     * Level 2 (Left):
-     * nEle=nEle - mid= 11 - 6 = 5
-     * mid=(nEle+1)/2=(5+1)/2=3
-     * Level 2 (Right):
-     * nEle=nEle + mid= 11 + 6 = 17
-     * mid=(nEle+1)/2=(17+1)/2=9
-     *
-     * neste exercicio:
-     * nElement=d
-     *
-     * (Value)
-     * u(n)=u(1)+(n-1).r
-     * neste exercicio
-     * u(n) = u(1)+(n-1).d
+
      *
      *
      * @param a - inicio da Progressão Aritmetica
@@ -91,6 +70,17 @@ public class AEDTree<E> {
         return BSTFAP(a, r, n, n);
     }
 
+    /**
+     *
+     * @param a
+     * @param r
+     * @param n
+     * @param nEle
+     * @return
+     *
+     * Método auxiliar para poder ser executada recurssivamente.
+     */
+
     public static Node<Integer> BSTFAP(int a, int r, int n, int nEle) {
         if(r<=0 || nEle < 1|| n < 0  ) {
             return null;
@@ -101,17 +91,37 @@ public class AEDTree<E> {
 
         Node<Integer> nN=new Node<Integer>(value);
         System.out.println("\t\t Node :"+mid+" Value : "+nN.value);
+
         int next=(n%2 == 0)?n-(nEle)/2 -1:n-(nEle +1 )/2;
         nN.left =BSTFAP(a, r,next , (nEle - (n+1)%2)/2 );
         nN.right=BSTFAP(a, r, n+(nEle + (n)%2 )/2 , nEle/2 );
         return nN;
     }
 
-
+    /**
+     *
+     * @param u1
+     * @param n
+     * @param r
+     * @return
+     * Retorna o valor da progressão aritmética respeitando os valores do argumento
+     */
     private static int elementFromArithProg(int u1, int n, int r){
         return u1+(n-1)*r;
     }
 
+    /**
+     *
+     * @param <E>
+     * @param root
+     * @param l
+     * @param r
+     * @return
+     * que retorna o número de elementos da árvore binária de pesquisa com raíz
+     * root pertencentes ao intervalo [l; r].
+     * Considere que o critério de organização da árvore binária de pesquisa é a
+     * ordenação natural do tipo E.
+     */
     public static <E extends Comparable<E>> int rangeCount(Node<E> root, E l, E r) {
 
         if (l == null || r == null || root == null) return 0;
@@ -143,9 +153,5 @@ public class AEDTree<E> {
      * @param args
      */
     public static void main(String[] args) {
-       Node<Integer> n= createBSTFromArithmeticProgression(1, 7, 23);
-
-
-       System.out.println("Nbr Elem: "+rangeCount(n, 29, 29));
     }
 }
