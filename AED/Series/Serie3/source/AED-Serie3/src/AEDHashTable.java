@@ -5,6 +5,22 @@
  * -> 33595: Nuno Sousa
  *
  * Exercicio 1:
+ * 1. Realize a classe generica AedHashTable<E> para a representçãoo e
+ * manipulação de tabelas de dispersão, contendo os seguintes métodos de instância
+ * públicos:
+ * -> void put(E e), que insere o elemento e na tabela.
+ * -> boolean contains(E e), que retorna true se e só se a tabela contiver um
+ * elemento igual a e.
+ * -> void removeAllDuplicates(), que remove todos os elementos duplicados, de
+ * forma a que a instância só contenha elementos distintos.
+ * -> E putUnique(E e), que insere o elemento e na tabela se e só se a tabela
+ * não contiver outro elemento igual. Caso já exista um elemento igual, retorna
+ * esse elemento. Caso contrário, retorna null.
+ *
+ * Esta classe deve implementar a interface Iterable<E>. O iterador retornado
+ * pelo metodo iterator() deve suportar remoção.
+ * Utilize o método equals, declarado na classeObject, para vericar se dois
+ * elementos são iguais.
  *
  */
 
@@ -24,9 +40,16 @@ public class AEDHashTable<E> {
      *
      * @param cmp
      * A construção da tabela de dispersão requer um comparador, a forma de como
-     * os elementos são comparaveis, para tornar mais efeciente
+     * os elementos são comparaveis, para tornar mais efeciente os métodos
+     * solicitados sobre a tabela de dispersão.
+     *
+     * Lança NullPointerException se o comparador passado por argumento for null.
      */
-    public AEDHashTable(Comparator cmp) {
+    /**
+     *
+     */
+    public AEDHashTable (Comparator cmp) {
+        if (cmp == null) throw new NullPointerException("O comparador do construtor não pode ser null");
         hashTable = new ExtNode[size];
         howToCompare = cmp;
     }
@@ -46,6 +69,17 @@ public class AEDHashTable<E> {
         }
 
         add(hashTable[index], newNode);
+    }
+
+        /**
+     *
+     * @param e
+     * @return
+     * obtem o indicie para a tabela de dispersão
+     */
+    private int getIndex(E e) {
+        int index = e.hashCode() % size;
+        return (index < 0) ? index + size : index;
     }
 
     /**
@@ -111,16 +145,7 @@ public class AEDHashTable<E> {
         head.next = newNode;
     }
 
-    /**
-     *
-     * @param e
-     * @return
-     * obtem o indicie para a tabela de dispersão
-     */
-    private int getIndex(E e) {
-        int index = e.hashCode() % size;
-        return (index < 0) ? index + size : index;
-    }
+
 
 
     /**
