@@ -8,5 +8,5 @@ int parseInt(const String string){
 		number=number*10 +(*i-'0');
 		++i;
 	}
-	return (*i!=0)? 0 : number;
+	return (*i!=0)? -1 : number;
 }
