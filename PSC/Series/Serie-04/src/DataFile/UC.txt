@@ -1,0 +1,42 @@
+AC1|Arquitectura de Computadores 1
+AC2|Arquitectura de Computadores II
+AED|Algoritmos e Estruturas de Dados
+ALGA|Algebra Linear e Geometria Analitica
+AVE|Ambientes Virtuais de Execucao
+CG|Computacao Grafica
+Com|Comunicacoes
+Cpl|Compiladores
+EGP|Economia e Gestao de Projectos
+Elctr|Electronica
+IA|Inteligencia Artificial
+LC|Logica e Computacao
+LIC|Laboratorio de Informatica e Computadores
+LS|Laboratorio de Software
+LSD|Logica e Sistemas Digitais
+M1|Matematica I
+M2|Matematica II
+MPD|Modelacao e Padroes de Desenho
+OGE|Organizacao e Gestao de Empresas
+PC|Programacao Concorrente
+PDM|Programacao em Dispositivos Moveis
+PDSI|Processamento Digital de Sinal e Imagem
+PE|Probabilidades e Estatistica
+PF|Programacao Funcional
+Pg|Programacao
+PI|Programacao na Internet
+PICC|Programacao Imperativa em C e C++
+POO|Programacao Orientada por Objectos
+PS|Projecto e Seminario
+PSC|Programacao em Sistemas Computacionais
+RCp|Redes de Computadores
+RI|Redes de Internet
+SD|Sistemas Distribuidos
+SE1|Sistemas Embebidos I
+SE2|Sistemas Embebidos II
+SG|Sistemas de Gestao
+SI|Seguranca Informatica
+SI1|Sistemas de Informacao I
+SI2|Sistemas de Informacao II
+SM|Sistemas Multimedia
+SOi|Sistemas Operativos (LEIC)
+TAR|Tecnologias Avancadas de Redes

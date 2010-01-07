@@ -1,0 +1,13 @@
+AC2|-6
+ALGA|-1
+Com|-4
+EGP|-3
+Elctr|-16
+LIC|-42
+M1|-4
+M2|-13
+OGE|-2
+PE|-2
+POO|-7
+RCp|-16
+TAR|-16
