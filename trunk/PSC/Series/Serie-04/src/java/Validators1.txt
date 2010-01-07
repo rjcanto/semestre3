@@ -1,0 +1,2 @@
+MinDistValidator | 13
+InvValidator | abc
