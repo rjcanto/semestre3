@@ -3,17 +3,17 @@
 
 #include <stdio.h>
 
-typedef struct MinDistValidator ndv;
+typedef struct MinDistValidator mdv;
 
-typedef struct mdv_vtable{
+typedef struct mdv_Methods{
+	static	void 	(*dtor) 	(mdv *this);
 	static	void 	(*setArgs) 	(String dest);
 	static	String 	(*ruleName) ();
 	static	int 	(*isValid) 	(Exam *exam);
-	static	void 	(*destroy) 	(mdv *this);
-} MinDistValidatorMethods;
+} mdvMethods;
 
 struct MinDistValidator{
-	MinDistValidatorMethods *vptr;
+	mdvMethods *vptr;
 	static int minDist = 13;
 	}
 	
