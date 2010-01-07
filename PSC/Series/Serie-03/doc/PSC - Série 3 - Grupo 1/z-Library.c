@@ -2,34 +2,19 @@
 #define STDIO_DEF
 #include <stdio.h>
 #endif	
-#include "z-LibraryPNG.h"
-#include "filtersPNG.h"
+#include "z-Library.h"
 #include <stdlib.h>
 #define DEFAULT_EXT_NAME ".z"
 enum CMD_ERRORS{CMD_INVALID_EXT,CMD_INVALID_OPTION,CMD_INVALID_FILES};
 
-int my_compress(FILE *source, FILE *dest, int level, myFilter myfilter)
+int my_compress(FILE *source, FILE *dest, int level)
 {
-	int CHUNK;
-    int ret, flush, i;
+    int ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char *in;
-    unsigned char *out;
-    unsigned char *prev;
-	unsigned char *aux_header;
-	
-	CHUNK = myfilter.lineSize+1;
-	
-	aux_header = (unsigned char *) (malloc(myfilter.nbrChars));
-	in = (unsigned char *) (malloc(CHUNK));
-	out = (unsigned char *) (malloc(CHUNK));
-	prev = (unsigned char *) (malloc(CHUNK));
-	
-	for(i=0; i<myfilter.lineSize+1; ++i)
-		prev[i]=0;
-	
-	
+    unsigned char in[CHUNK];
+    unsigned char out[CHUNK];
+
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -40,29 +25,17 @@ int my_compress(FILE *source, FILE *dest, int level, myFilter myfilter)
 
     /* compress until end of file */
     do {
-		
-		if (myfilter.firstLine){
-			strm.avail_in = fread(aux_header, 1, myfilter.nbrChars, source);
-		}
-		else
-			strm.avail_in = fread(in, 1, CHUNK, source);
-			
+        strm.avail_in = fread(in, 1, CHUNK, source);
         if (ferror(source)) {
             (void)deflateEnd(&strm);
             return Z_ERRNO;
         }
         flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
-		
-		if (myfilter.type!=-1 && !myfilter.firstLine){
-			filterPNG(in, prev, out, myfilter.lineSize, myfilter.bpp, myfilter.type);
-			copyByteArray(in, prev, CHUNK);
-			copyByteArray(out, in, CHUNK);
-		}
-		myfilter.firstLine = false;
+        strm.next_in = in;
 
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
-        do {		
+        do {
             strm.avail_out = CHUNK;
             strm.next_out = out;
             ret = deflate(&strm, flush);    /* no bad return value */
@@ -81,32 +54,18 @@ int my_compress(FILE *source, FILE *dest, int level, myFilter myfilter)
 
     /* clean up and return */
     (void)deflateEnd(&strm);
-	
-	/* clear the space reserved in the beggining */
-	free(in);
-	free(out);
-	free(prev);
-	free(aux_header);
-	
     return Z_OK;
 }
 
 
-int my_decompress(FILE *source, FILE *dest, myFilter myfilter)
+int my_decompress(FILE *source, FILE *dest)
 {
-	FILE* temp;
-	header fhp;
-    int ret, i;
-	int CHUNK;
+    int ret;
     unsigned have;
     z_stream strm;
-    unsigned char *in;
-    unsigned char *out;
-    unsigned char *prev;
-	unsigned char *aux_header;
+    unsigned char in[CHUNK];
+    unsigned char out[CHUNK];
 
-	CHUNK = 128*KBYTES;
-	
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -119,8 +78,7 @@ int my_decompress(FILE *source, FILE *dest, myFilter myfilter)
 
     /* decompress until deflate stream ends or end of file */
     do {
-		
-		strm.avail_in = fread(in, 1, CHUNK, source);
+        strm.avail_in = fread(in, 1, CHUNK, source);
         if (ferror(source)) {
             (void)inflateEnd(&strm);
             return Z_ERRNO;
@@ -155,53 +113,6 @@ int my_decompress(FILE *source, FILE *dest, myFilter myfilter)
 
     /* clean up and return */
     (void)inflateEnd(&strm);
-	
-	/* unfilter file */
-	
-	temp=dest;
-	dest=source;
-	source=temp;
-	fseek(source,0, SEEK_SET);
-	fseek(dest,0, SEEK_SET);
-	
-	myfilter.nbrChars=processFileHeader(myfilter.sourceName,&fhp);
-	myfilter.bpp=(fhp.magicValue>3 ? 3:1);
-	myfilter.lineSize=fhp.imageWidth*myfilter.bpp;
-	myfilter.firstLine=true;
-	CHUNK=myfilter.lineSize+1;
-	
-	for(i=0; i<myfilter.lineSize+1; ++i)
-		prev[i]=0;
-	
-	aux_header = (unsigned char *) (malloc(myfilter.nbrChars));
-	in = (unsigned char *) (malloc(CHUNK));
-	out = (unsigned char *) (malloc(CHUNK));
-	prev = (unsigned char *) (malloc(CHUNK));
-	
-	do {	
-		if (myfilter.firstLine){
-			(*aux_header) = fread(aux_header, 1, myfilter.nbrChars, source);
-		}
-		else
-			(*in) = fread(in, 1, CHUNK, source);
-			
-		if (myfilter.type!=-1 && !myfilter.firstLine){
-			unfilterPNG(in, prev, out, myfilter.lineSize, myfilter.bpp);
-			copyByteArray(in, prev, CHUNK);
-		}
-		myfilter.firstLine = false;
-	
-		fwrite(out, 1, CHUNK-1, dest);
-	} while((*in) == EOF || (*aux_header) == EOF);
-	
-	/* clear the space reserved in the beggining */
-	free(in);
-	free(out);
-	free(prev);
-	free(aux_header);
-
-	
-	
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 /* report a zlib or i/o error */
@@ -370,8 +281,6 @@ int main(int argc, char **argv)
 {
     int ret=0;
     myArgs myargs;
-	myFilter myfilter;
-	header fhp;
     char * outputfile=0;
     FILE *sourceFile;
     FILE *destinationFile;
@@ -398,17 +307,8 @@ int main(int argc, char **argv)
 		myargs.destParsed=true;
 	}
 
-	/**
-	 * Recolher dados para a operacao de filtragem
-	 **/
-	myfilter.sourceName=myargs.source;
-	myfilter.type=myargs.filter;
-	if (myargs.action == compress_action){
-		myfilter.nbrChars=processFileHeader(myfilter.sourceName,&fhp);
-		myfilter.bpp=(fhp.magicValue>3 ? 3:1);
-		myfilter.lineSize=fhp.imageWidth*myfilter.bpp;
-		myfilter.firstLine=true;
-	}
+ 
+
 	/**
 	 * Processamento do ficheiro
 	 **/
@@ -420,9 +320,9 @@ int main(int argc, char **argv)
 
 	printf("Processing file: %s into %s ...", myargs.source,myargs.destination);
 	if (myargs.action == compress_action){
-		ret = my_compress(sourceFile,destinationFile, myargs.compressLevel, myfilter);
+		ret = my_compress(sourceFile,destinationFile, myargs.compressLevel);
 	}else{
-		ret = my_decompress(sourceFile, destinationFile, myfilter);
+		ret = my_decompress(sourceFile, destinationFile);
 	}
 	if (ret != Z_OK){
 			printf("--- :::  ERROR. File not processed!\n");
