@@ -1,0 +1,85 @@
+------------------------------------------------------------------------
+Semestre de Verao 2007/08 Teste Final, Epoca especial (2h30m)
+------------------------------------------------------------------------
+I - Notação O
+* A insercao num amontoado binario tem custo O(log(n)), contudo a 
+remocao tem custo O(n).
+* Insertion SORT
+* Recorrencia
+* Inserção em Heap
+
+II - 
+* Pesquisa Binária
+* Listas Ligadas (Rotacao)
+* HashTable 
+* Arvores Binaria
+------------------------------------------------------------------------
+Semestre de Verao 2007/08 Teste Final, segunda epoca
+------------------------------------------------------------------------
+I - 
+* Heaps vs árvores Binárias
+* B-Tree:  A inserção 
+* quick-sort vs merge-sort
+* Head: remoção 
+
+II - 
+* Pesquisa
+* Lista
+* Árvore Binária
+
+------------------------------------------------------------------------
+Semestre de Verao 2007/08 Teste Final, primeira epoca
+------------------------------------------------------------------------
+I -
+* Heap vs Árvores Binárias
+* B-Tree inserção
+* Hash-Table vs Arrays Ordenados vs Arvores Binárias
+* selection sort vs insertion sort
+
+II - 
+* Heap
+* Heap  + O
+* Rodar Nó
+* HashTable
+* Arvore Binaria
+
+------------------------------------------------------------------------
+Semestre de Inverno 2008/09 Teste Final, epoca especial
+------------------------------------------------------------------------
+I - 
+* O
+* B-TREE
+
+II - 
+* Pesquisa Binária
+* Heap
+* HashTable
+* Arvore Binaria
+
+------------------------------------------------------------------------
+Semestre de Inverno 2008/09 Teste final, segunda epoca
+------------------------------------------------------------------------
+I - 
+* Algoritmos de Ordenação e O
+* B-Tree
+
+II - 
+* Pesquisa Binária
+* Heap
+* Hash
+* Arvore Binária
+
+------------------------------------------------------------------------
+Semestre de Inverno 2008/09 Teste final, primeira epoca
+------------------------------------------------------------------------
+I - 
+* O Notation (provas)
+* Algorimo
+* B-TREE
+
+II - 
+* Pesquisa Binária
+* Heap
+* HashTable
+* Arvore Binaria
+
