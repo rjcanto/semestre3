@@ -5,10 +5,15 @@
 #include "myLib.h"
 #define IO_ERROR_EXCEPTION 0xFFFE
 #define MAX_ITEMS 10
+#define MAX_LINE_SZ 30
 
 typedef struct DataLoader dldr;
-
 typedef void* ItemType;
+
+dldr* 		DataLoader_ctor		();
+void 		DataLoader_dtor		(dldr * this);
+ItemType* 	loadFrom			(dldr *this, String filename);
+ItemType*	build				(dldr *this, int n);
 
 typedef struct DataLoader_vtable{
 	void 		(*dtor) 		(dldr *this);
@@ -23,6 +28,5 @@ struct DataLoader{
 	FILE* input;
 };
 
-dldr* DataLoader_ctor();
-	
+
 #endif

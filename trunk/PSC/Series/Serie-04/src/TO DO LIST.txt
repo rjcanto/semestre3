@@ -1,3 +1,8 @@
-implementação de excepções (!!)
+
+- Finalizar a Classe Exam
+- Implementar ExamValidator e Loader 
+- implementar as interfaces
+- carregamento dinâmico das bibliotecas
+- passar no exame :)
 
 
