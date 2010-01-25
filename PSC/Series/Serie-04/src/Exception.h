@@ -12,9 +12,9 @@
 
 #include <setjmp.h>
 
-#define TRY jmp_buf jmp; switch (setjmp(jmp)){case0:
-#define CATCH(E) break;case e;
-#define THROW(E) longjmp(jmp,e);
+#define TRY jmp_buf jmp; switch (setjmp(jmp)){case 0:
+#define CATCH(e) break;case e:
+#define THROW(e) longjmp(jmp,e);
 
 
 #endif

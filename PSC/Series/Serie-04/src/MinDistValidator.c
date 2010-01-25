@@ -16,15 +16,15 @@ mdv* mdv_ctor(){
 	return m;
 }
 
-static void setArgs (mdv* this, String *dest){
+static void setArgs(mdv* this, String dest){
 	this->minDist = parseInt(dest);
 }
 
-static String ruleName (mdv* this){
+static String ruleName(mdv* this){
 	return "Distancia minima entre exames da mesma UC.";
 }
 
-static boolean isValid(mdv* this Exam *exam){
+static boolean isValid(mdv* this, Exam *exam){
 	return (exam->vptr->date2() - exam->vptr->date1() >= this->minDist);
 }
 
