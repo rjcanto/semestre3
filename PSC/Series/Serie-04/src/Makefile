@@ -1,7 +1,7 @@
 all: test
 
-test: test.o myLib.o DataLoader.o ProgramCourse.o Exam.o
-	gcc -o test test.o myLib.o
+test: test.o myLib.o DataLoader.o ProgramCourse.o
+	gcc -o test test.o myLib.o DataLoader.o ProgramCourse.o
 
 test.o: test.c myLib.h
 	gcc -c -g -Wall -pedantic -o test.o test.c
@@ -10,7 +10,7 @@ myLib.o: myLib.c myLib.h
 	gcc -c -g -Wall -pedantic -o myLib.o myLib.c
 	
 DataLoader.o: DataLoader.c DataLoader.h
-	gcc -c -g -Wall -pedantic -o ProgramCourse.o ProgramCourse.c
+	gcc -c -g -Wall -pedantic -o DataLoader.o DataLoader.c
 
 ProgramCourse.o: ProgramCourse.c ProgramCourse.h
 	gcc -c -g -Wall -pedantic -o ProgramCourse.o ProgramCourse.c

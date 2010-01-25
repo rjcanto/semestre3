@@ -3,12 +3,12 @@
 #include "myLib.h"
 #include "DataLoader.h"
 #include "ProgramCourse.h"
-#include "Exam.h"
+
 
 
 int main() {
-	prgcourse* courses;	
-	
+	prgcourse** courses;	
+	/*
 	TRY{
 	puts("START...");
 	printf("%i\n", parseInt(jmp,"10"));	
@@ -18,17 +18,17 @@ int main() {
 	}CATCH(INT_EXCEPTION){
 	puts("INT_EXCEPTION");
 	}
-}
-
-	courses = ProgramCourse_ctor();
-
-
+}*/
+	char** array = (char**) malloc(10 * sizeof(char*));
+	printf("size of array: %i\n", sizeof(array));
+	printf("size of array[0]: %i\n", sizeof(array[0]));
 	
-
-	courses = courses->vptr->loadFrom(courses, "LEIC-0809-2.txt");
+	
+	courses = pc_loadFrom(courses, "LEIC-0809-2.txt");
+	puts("aaa");
 	printf("#ProgramCourse = %i\n", sizeof(courses)/sizeof(courses[0]));
 	puts("---------------------");
-
+	
 
 
 return 0;

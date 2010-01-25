@@ -14,18 +14,18 @@ typedef struct ExamLoader examldr;
 
 typedef struct Exam_vtable{
 	void 		(*dtor) 			(exam *this);
-	void		(*dtor_array)		(exam *this);
+	void		(*dtor_array)		(exam **this);
 	int			(*comparator)		(exam *pc1, exam* pc2);
-	exam*		(*loadFrom)			(exam *this, String filename, prgcourse * courses);
-	int 		(*indexOf)			(String acr, exam* exams);
+	exam**		(*loadFrom)			(exam **this, String filename, prgcourse** courses);
+	int 		(*indexOf)			(String acr, exam** exams);
 } examMethods;
 
 struct Exam{
 	examMethods *vptr;
-	const prgcourse course;
-	const int date1;
-	const int date2;
-	const dldr* loader;
+	prgcourse course;
+	int date1;
+	int date2;
+	dldr* loader;
 };
 
 typedef struct ExamLoader_vtable{
@@ -36,6 +36,8 @@ struct ExamLoader{
 	examldr	*vptr;
 	prgcourse* courses;
 }
+
+
 
 #define course(this)		(((const exam * const)(this))->course)
 #define date1(this)			(((const exam * const)(this))->date1)

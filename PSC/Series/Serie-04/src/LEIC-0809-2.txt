@@ -1,0 +1,4 @@
+AED|B|4|POO|PE
+AC1 | B |2|LSD|
+AC2|B|4|AC1
+ALGA|B|1||

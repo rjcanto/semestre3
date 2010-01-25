@@ -1,12 +1,6 @@
 #include "ProgramCourse.h"
 
-static void 		ProgramCourse_dtor 		(prgcourse * this);
-static void			ProgramCourse_cleanup	(prgcourse ** this);
-static int			pc_comparator			(prgcourse * pc1, prgcourse* pc2);
-static prgcourse**	pc_loadFrom				(prgcourse ** this, String filename);
-static int 			pc_indexOf				(String acr, prgcourse* courses);
-static prgcourse*	pc_newArray				(int numEntries);
-static prgcourse* 	pc_newInstance			(String* elems);
+
 
 static prgcourseMethods prgcourse_vtable={
 	ProgramCourse_dtor,
@@ -16,47 +10,41 @@ static prgcourseMethods prgcourse_vtable={
 	pc_indexOf
 };
 
-static void ProgramCourse_dtor(prgcourse * this){
+void ProgramCourse_dtor(prgcourse * this){
 	if (this!=NULL){
 		if (this->acronym)
 			free(this->acronym);
-		this->loader->vptr->dtor(this->loader);
 		free(this);
 	}
 }
 
-static void ProgramCourse_cleanup(prgcourse** this){
+void ProgramCourse_cleanup(prgcourse** this){
 	int i=0;
 	int size = sizeof(this)/sizeof(this[0]);
 	for (i=0; i<size; ++i)
 		this[i]->vptr->dtor(this[i]);
 }
 	
-static prgcourse* ProgramCourse_init(prgcourse * this, String acronym, char type, int terms){
-	if (acronym) {
-		this->acronym = (String) malloc(strlen(acronym)+1);
-		strcpy(this->acronym, acronym);
-	}
-	this->type = type;
-	this->terms = terms;
-	return this;
-}
-	
-static prgcourse* ProgramCourse_ctor(){
+prgcourse* ProgramCourse_ctor(String acronym, char type, int terms){
 	prgcourse *p = (prgcourse *)malloc(sizeof(prgcourse));
+	
+	
+	if (acronym) {
+		p->acronym = (String) malloc(strlen(acronym)+1);
+		strcpy(p->acronym, acronym);
+	}
+	p->type = type;
+	p->terms = terms;
 	p->vptr = &prgcourse_vtable;
-	p->loader = DataLoader_ctor();
-	p->loader->vptr->newArray = &pc_newArray;
-	p->loader->vptr->newInstance = &pc_newInstance;
 	return p;
 }
 
-static prgcourse* pc_newArray(int numEntries){
-	prgcourse* aux = (prgcourse*) malloc(sizeof(prgcourse*) * numEntries);
+void** pc_newArray(int numEntries){
+	void** aux =  malloc(sizeof(prgcourse*) * numEntries);
 	return aux;
 }
 
-static prgcourse* pc_newInstance(String* elems){
+void* pc_newInstance(String* elems){
 	char type;
 	int trms;	
 	if (elems[0] == NULL) 
@@ -70,24 +58,33 @@ static prgcourse* pc_newInstance(String* elems){
 		}
 		}	/* END OF TRY BLOCK */
 	}
-	return ProgramCourse_ctor(elems, type, trms);
+	return ProgramCourse_ctor(elems[0], type, trms);
 }
 
-static int pc_comparator(prgcourse *pc1, prgcourse *pc2){
-	return (strcmp(pc1->acronym, pc2->acronym)); 
+int pc_comparator(const void *pc1, const void *pc2){	
+	return (strcmp( ((prgcourse *) (pc1))->acronym,((prgcourse *) (pc2))->acronym)); 
 }
 
-static prgcourse** pc_loadFrom(prgcourse** courses, String filename){
-	courses = (prgcourse**) courses[0]->loader->vptr->loadFrom(loader, filename);
-	qsort(courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), courses[0]->vptr->comparator);
+prgcourse** pc_loadFrom(prgcourse** courses, String filename){
+	dldr * loader = DataLoader_ctor();
+	loader->vptr->newArray = &pc_newArray;
+	loader->vptr->newInstance = &pc_newInstance;
+	
+	courses = (prgcourse**) loader->vptr->loadFrom(loader, filename);
+	printf("size of courses: %i\n",sizeof(**courses));
+	
+	qsort(courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), pc_comparator);
 	return courses;
 }
 
-static int indexOf(String acr, prgcourse** courses){
-	int res;
+int pc_indexOf(String acr, prgcourse** courses){
+	prgcourse* res;
 	prgcourse* key = ProgramCourse_ctor(acr, '\0', -1);
-	return (res=bsearch(key, courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), courses[0]->vptr->comparator)? (res-courses) : -1);
+	res= bsearch(key, courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), pc_comparator);
+
+	if (res==NULL)
+		return -1;
+	return (res - (prgcourse*) courses);
 }
-	
-	
+
  
