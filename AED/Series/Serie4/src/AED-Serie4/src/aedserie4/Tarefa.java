@@ -26,6 +26,11 @@ public class Tarefa{
     }
 
     public int compareTo(Tarefa t) {
-        return penalty - t.penalty;
+        if (penalty - t.penalty != 0)
+            return penalty - t.penalty;
+        if (deadLine -t.deadLine != 0)
+            return deadLine -t.deadLine;
+        return id - t.id;
+
     }
 }
