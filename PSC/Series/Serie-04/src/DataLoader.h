@@ -5,16 +5,11 @@
 #include "myLib.h"
 #define IO_ERROR_EXCEPTION 0xFFFE
 #define MAX_ITEMS 10
-#define MAX_LINE_SZ 30
+#define MAX_LINE_SZ 40
 
 typedef struct DataLoader dldr;
 typedef void* ItemType;
 typedef struct ItemTypeArray arrayItem;
-
-dldr* 		DataLoader_ctor		();
-void 		DataLoader_dtor		(dldr * this);
-arrayItem* 	loadFrom			(dldr *this, arrayItem* arr, String filename);
-arrayItem*	build				(dldr *this, arrayItem* arr, int n);
 
 typedef struct DataLoader_vtable{
 	void 		(*dtor) 		(dldr *this);
@@ -43,5 +38,9 @@ struct ItemTypeArray{
 #define getArray(this)		(this->array)
 #define getArrayPos(var,i)	(var->array[i])
 
+dldr* 		DataLoader_ctor		();
+void 		DataLoader_dtor		(dldr * this);
+arrayItem* 	loadFrom			(dldr *this, arrayItem* arr, String filename);
+arrayItem*	build				(dldr *this, arrayItem* arr, int n);
 
 #endif

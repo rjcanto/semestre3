@@ -12,6 +12,10 @@ static nrvMethods nrv_vtable={
 
 void* ctor(){
 	nrv* n = (nrv*)malloc(sizeof(nrv));
+	if (n==NULL){
+		printf("NoRepValidator: malloc falhou.");
+		exit(1);
+	}
 	n->vptr = &nrv_vtable;                     
 	return (void*)(n);
 }
@@ -32,8 +36,3 @@ int isValid(twoEV* this, exam *exam1, exam *exam2){
 	return (getDate1(exam1) != getDate1(exam2) ||
 			getDate2(exam1) != getDate2(exam2));
 }
-
-
-
-
-

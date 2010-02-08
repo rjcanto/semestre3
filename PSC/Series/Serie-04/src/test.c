@@ -5,21 +5,36 @@
 #include "Exam.h"
 #include "ExamValidator.h"
 
+
+/*DEBUG*/
 void pc_Print(arrayItem* arr){
-	int i;
+	int i,j=0;
+	String* aux2;
 	prgcourse* aux;
 	for(i=0; i<arr->size; ++i){
 		aux=getArrayPosPC(arr, i);
-		printf("num: %d - %s - %c - %d - %s - %s\n",i,getAcronym(aux),getType(aux), getTerms(aux), getSDep(aux), getWDep(aux));
+		printf("num: %d - %s - %c - %d",i,getAcronym(aux), getType(aux), getTerms(aux));
+		aux2 = getSDep(aux);
+		j=0;
+		while(aux2[j]){
+			printf(" - %s;",(String)(aux2[j]));
+			++j;
+		}
+		j=0;
+		aux2 = getWDep(aux);
+		while(aux2[j]){
+			printf(" - %s;",(String)(aux2[j]));
+			++j;
+		}
+		printf("\n");
 	}
 }
-
 void e_Print(arrayItem* arr){
 	int i;
 	exam* aux;
 	for(i=0; i<arr->size; ++i){
 		aux=getArrayPosE(arr,i);
-		printf("num: %d - %s - %c - %d : %d :%d\n",i,getAcronym(getCourse(aux)), getDate1(aux), getDate2(aux));
+		printf("num: %d : %s : %d : %d\n",i,getAcronym(getCourse(aux)), getDate1(aux), getDate2(aux));
 	}
 }
 

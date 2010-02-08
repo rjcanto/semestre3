@@ -9,6 +9,10 @@ static mdvMethods mdv_vtable={
 
 void* ctor(){
 	mdv* m = malloc(sizeof(mdv));
+	if (m==NULL){
+		printf("MinDistValidator: malloc falhou.");
+		exit(1);
+	}
 	m->vptr = &mdv_vtable;                     
 	m->minDist=13;
 	return (void*)(m);
@@ -40,5 +44,3 @@ int mdv_parseInt(const String string){
 	}    
     return number;
 }
-
-

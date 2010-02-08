@@ -1,1 +1,3 @@
 NoRepValidator
+MinDistDependentValidator | 1;2
+MandatorySameDayValidator

@@ -44,5 +44,6 @@ PrgCourseArray*		pc_loadFrom					(String filename);
 int 				pc_indexOf					(String acr, PrgCourseArray* courses);
 void**				pc_newArray					(int numEntries);
 void* 				pc_newInstance				(String* elems, int nbr);
+void 				ProgramCourse_mallocError();
 		   
 #endif

@@ -16,7 +16,7 @@ enum boolean {false,true};
 
 int parseInt(jmp_buf jmp, const String string);
 
-String xstrtrim(String string);
-
+String 	xstrtrim	(String string);
+void 	mallocError	(String str);
 
 #endif
