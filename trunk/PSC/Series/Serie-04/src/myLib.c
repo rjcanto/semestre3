@@ -27,7 +27,7 @@ String xstrtrim(String str){
 	
 	/*retira os espaços no inicio e no fim*/
 	while(*start==' ') ++start;
-	while(*end==' ' && end>start) --end;
+	while((*end==' ' || *end=='\r' || *end=='\n') && end>start) --end;
 	if(str+lenght-1 != end)
 	*(end+1) = '\0';
 	

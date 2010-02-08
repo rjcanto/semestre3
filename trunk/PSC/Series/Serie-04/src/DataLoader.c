@@ -12,6 +12,7 @@ static dldrMethods dldr_vtable={
 
 dldr* DataLoader_ctor(){
 	dldr* d = (dldr *)malloc(sizeof(dldr));
+	d->input = NULL;
 	d->vptr = &dldr_vtable; 
 	return d;
 }
@@ -21,31 +22,40 @@ void DataLoader_dtor(dldr *this){
 		free(this);
 }
 
-ItemType* loadFrom(dldr *this, String filename){
-	ItemType* res;
-	this->input=fopen(filename, "r");
-	puts(filename);
-	res=this->vptr->build(this,0);
+arrayItem* loadFrom(dldr* this, arrayItem* arr, String filename){
+	FILE* xpto = fopen(filename, "r");
+	if (!xpto){
+		printf("Erro a ler o ficheiro: %s.\n\n",filename);
+		exit(1);
+	}
+	this->input = xpto;
+	/*DEBUG*/
+	/*puts(filename);*/
+	this->vptr->build(this,arr,0);
 	fclose(this->input);
-	puts("DataLoader.loadFrom");
-	printf("size of array: %i\n", sizeof(res));
-	printf("size of array[0]: %i\n", sizeof(res[0]));
-	return res;
+	return arr;
 }
 
-ItemType* build(dldr *this, int n){
+arrayItem* build(dldr* this, arrayItem* arr, int n){
 	int idx=0, i=0;
 	ItemType* item=NULL;
-	ItemType* items=NULL;
-	String line = (String) malloc(sizeof(String)*MAX_LINE_SZ);
-	String* elems = (String*) malloc(sizeof(String)*MAX_ITEMS);
+	String line = (String) malloc(sizeof(char)*MAX_LINE_SZ+1);
+	String* elems; 
 
 	if ((fgets(line, 30,this->input))==NULL){
-		if (!feof(this->input))
+		if (!feof(this->input)){
+			free(line);
 			return NULL;	/*THROW(IO_ERROR_EXCEPTION);*/
-		else
-			return this->vptr->newArray(n);
+		}
+		else{
+			arr->size = n;
+			arr->array=this->vptr->newArray(n);
+			free(line);
+			return arr;
+		}
 	}
+	
+	elems = (String*) malloc(sizeof(String)*MAX_ITEMS);
 		
 	/*contar o num de tokens e alocar espaco do elems*/
 	/*assumimos que existem um maximo de MAX_ITEMS por linha*/
@@ -54,22 +64,23 @@ ItemType* build(dldr *this, int n){
 		++idx;
 		line=NULL;
 	}
+	free(line);
 	
 	if(idx>0 && strlen(elems[0])>0){
 		for (i=0; i<idx; ++i){
 			elems[i]=xstrtrim(elems[i]);
 		}
-		item = this->vptr->newInstance(elems);	
+		item = this->vptr->newInstance(elems, idx);
+		free(elems);
 	}
 	
 	if(item != NULL){
-		items = build(this, n+1);
-			/*items = malloc(sizeof(ItemType)*n);*/
-			printf("n: %i\n", n);
-		items[n] = item;
-		return items;
+		arr = build(this,arr, n+1);
+			/*printf("n: %i\n", n);	DEBUG*/
+		arr->array[n] = item;
+		return arr;
 	}
-	return this->vptr->build(this, n);	
+	return this->vptr->build(this,arr, n);	
 }
 
 

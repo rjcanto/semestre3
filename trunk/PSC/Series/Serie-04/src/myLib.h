@@ -9,9 +9,9 @@
 #define UNSUCCESS 1;
 #define INT_EXCEPTION 0xFFFF
 
-enum boolean {false,true};
 typedef unsigned char byte;
 typedef char* String;
+enum boolean {false,true};
 
 
 int parseInt(jmp_buf jmp, const String string);

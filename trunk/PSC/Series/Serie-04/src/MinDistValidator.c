@@ -1,37 +1,44 @@
-#include <stdio.h>
-#include 'myLib.h'
-#include 'MinDistValidator.h';
-
+#include "MinDistValidator.h"
 
 static mdvMethods mdv_vtable={
 	dtor,
-	setArgs,
 	ruleName,
+	setArgs,
 	isValid
 };
 
-mdv* mdv_ctor(){
-	mdv* m = (mdv *)malloc(sizeof(mdv));
-	m->vptr = &mdv_table;                     
-	return m;
+void* ctor(){
+	mdv* m = malloc(sizeof(mdv));
+	m->vptr = &mdv_vtable;                     
+	m->minDist=13;
+	return (void*)(m);
 }
 
-static void setArgs(mdv* this, String dest){
-	this->minDist = parseInt(dest);
-}
-
-static String ruleName(mdv* this){
-	return "Distancia minima entre exames da mesma UC.";
-}
-
-static boolean isValid(mdv* this, Exam *exam){
-	return (exam->vptr->date2() - exam->vptr->date1() >= this->minDist);
-}
-
-static void dtor(mdv *this){
-	if (this != null)
+void dtor(oneEV* this){
+	if (this != NULL)
 		free(this);
 }
 
+void setArgs(oneEV* this, String dest){
+	((mdv*)(this))->minDist = mdv_parseInt(dest);
+}
+
+char* ruleName(){
+	return "Distancia minima entre exames da mesma UC.";
+}
+
+int isValid(oneEV* this, exam* ex){
+	return (getDate2(ex) - getDate1(ex) >= ((mdv*)(this))->minDist);
+}
+
+int mdv_parseInt(const String string){
+	int number=0;
+	String i = string;
+	while (*i!=0 && *i>='0' && *i <='9'){
+		number=number*10 +(*i-'0');
+		++i;
+	}    
+    return number;
+}
 
 

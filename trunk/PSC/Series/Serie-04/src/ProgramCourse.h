@@ -4,18 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dlfcn.h>
 #include "myLib.h"
 #include "DataLoader.h"
 /*#define IO_ERROR_EXCEPTION 0xFFFD*/
-
+#define MAX_DEP_UC 3
 typedef struct ProgramCourse prgcourse;
+typedef struct ItemTypeArray PrgCourseArray;
 
 typedef struct ProgramCourse_vtable{
 	void 		(*dtor) 			(prgcourse *this);
-	void		(*dtor_array)		(prgcourse **this);
 	int			(*comparator)		(const void *pc1, const void* pc2);
-	prgcourse**	(*loadFrom)			(prgcourse **this, String filename);
-	int 		(*indexOf)			(String acr, prgcourse** courses);
+	arrayItem*	(*loadFrom)			(String filename);
+	int 		(*indexOf)			(String acr, PrgCourseArray* courses);
 } prgcourseMethods;
 
 struct ProgramCourse{
@@ -23,25 +24,25 @@ struct ProgramCourse{
 	String 	acronym;
 	char 	type;
 	int 	terms;
+	String*	sdep;
+	String*	wdep;
 };
 
-typedef struct ProgramCourseArray{
-	prgcourse** array;
-	int size;
-}pca;
+#define getAcronym(this)			(((const prgcourse * const)(this))->acronym)
+#define getType(this)				(((const prgcourse * const)(this))->type)
+#define getTerms(this)				(((const prgcourse * const)(this))->terms)
+#define getSDep(this)				(((const prgcourse * const)(this))->sdep)
+#define getWDep(this)				(((const prgcourse * const)(this))->wdep)
+#define getArrayPC(this)			((prgcourse**)(this->array))
+#define getArrayPosPC(var,i)		((prgcourse*)(var->array[i]))
 
-
-prgcourse* 			ProgramCourse_ctor		(String acronym, char type, int terms);
-void 				ProgramCourse_dtor 		(prgcourse * this);
-void				ProgramCourse_cleanup	(prgcourse ** this);
-int			pc_comparator			(const void * pc1, const void* pc2);
-prgcourse**			pc_loadFrom				(prgcourse ** this, String filename);
-int 			pc_indexOf				(String acr, prgcourse** courses);
-void**		pc_newArray				(int numEntries);
-void* 		pc_newInstance			(String* elems);
-
-#define acronym(this)		(((const prgcourse * const)(this))->acronym)
-#define type(this)			(((const prgcourse * const)(this))->type)
-#define terms(this)			(((const prgcourse * const)(this))->terms)
+prgcourse* 			ProgramCourse_ctor			(String acronym, char type, int terms, String sdep, String wdep);
+void 				ProgramCourse_dtor 			(prgcourse * this);
+void				ProgramCourseArray_dtor		(PrgCourseArray * this);
+int					pc_comparator				(const void * pc1, const void* pc2);
+PrgCourseArray*		pc_loadFrom					(String filename);
+int 				pc_indexOf					(String acr, PrgCourseArray* courses);
+void**				pc_newArray					(int numEntries);
+void* 				pc_newInstance				(String* elems, int nbr);
 		   
 #endif

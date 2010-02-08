@@ -1,42 +1,69 @@
 #include "ProgramCourse.h"
 
-
-
 static prgcourseMethods prgcourse_vtable={
 	ProgramCourse_dtor,
-	ProgramCourse_cleanup,
 	pc_comparator,
 	pc_loadFrom,
 	pc_indexOf
+};
+
+static arrayMethods prgcourseArray_vtable={
+	ProgramCourseArray_dtor
 };
 
 void ProgramCourse_dtor(prgcourse * this){
 	if (this!=NULL){
 		if (this->acronym)
 			free(this->acronym);
+		if (this->sdep)
+			free(this->sdep);
+		if (this->wdep)
+			free(this->wdep);
 		free(this);
 	}
 }
 
-void ProgramCourse_cleanup(prgcourse** this){
+void ProgramCourseArray_dtor(PrgCourseArray* this){
 	int i=0;
-	int size = sizeof(this)/sizeof(this[0]);
-	for (i=0; i<size; ++i)
-		this[i]->vptr->dtor(this[i]);
+	for (i=0; i<length(this); ++i)
+		getArrayPosPC(this,i)->vptr->dtor(getArrayPosPC(this,i));
+	free(this->array);
+	free(this);
 }
-	
-prgcourse* ProgramCourse_ctor(String acronym, char type, int terms){
-	prgcourse *p = (prgcourse *)malloc(sizeof(prgcourse));
-	
-	
-	if (acronym) {
-		p->acronym = (String) malloc(strlen(acronym)+1);
-		strcpy(p->acronym, acronym);
+
+String* processDependents(String str){
+	int i, idx=0;
+	String* depUC = (String*) malloc(sizeof(String)*(MAX_DEP_UC+1));
+		
+	while((depUC[idx]=strtok(str,";"))!=NULL){
+		++idx;
+		str=NULL;
 	}
+	if(idx>0 && strlen(depUC[0])>0)
+		for (i=0; i<idx; ++i)
+			depUC[i]=xstrtrim(depUC[i]);
+	return depUC;
+}
+
+prgcourse* ProgramCourse_ctor(String acronym, char type, int terms, String sdep, String wdep){
+	prgcourse *p = (prgcourse *)malloc(sizeof(prgcourse));
+	if (acronym){
+		p->acronym = (String) malloc(strlen(acronym)+1*sizeof(char));
+		strcpy(p->acronym,acronym);
+	}
+	p->sdep = processDependents(sdep);
+	p->wdep = processDependents(wdep);
 	p->type = type;
 	p->terms = terms;
 	p->vptr = &prgcourse_vtable;
 	return p;
+}
+
+PrgCourseArray* ProgramCourseArray_ctor(){
+	PrgCourseArray* aux= (PrgCourseArray*) (malloc(sizeof(PrgCourseArray)));
+	aux->vptr = &prgcourseArray_vtable;
+	aux->size=0;
+	return aux;
 }
 
 void** pc_newArray(int numEntries){
@@ -44,9 +71,9 @@ void** pc_newArray(int numEntries){
 	return aux;
 }
 
-void* pc_newInstance(String* elems){
+void* pc_newInstance(String* elems, int nbr){
 	char type;
-	int trms;	
+	int trms;
 	if (elems[0] == NULL) 
 		return NULL;
 	type = ((strlen(elems[1])==1) ? (*elems[1]):'\0');
@@ -58,33 +85,35 @@ void* pc_newInstance(String* elems){
 		}
 		}	/* END OF TRY BLOCK */
 	}
-	return ProgramCourse_ctor(elems[0], type, trms);
+	return ProgramCourse_ctor(elems[0], type, trms, elems[3], elems[4]);
 }
 
 int pc_comparator(const void *pc1, const void *pc2){	
-	return (strcmp( ((prgcourse *) (pc1))->acronym,((prgcourse *) (pc2))->acronym)); 
+	return (strcmp( getAcronym(pc1),getAcronym(pc2))); 
 }
 
-prgcourse** pc_loadFrom(prgcourse** courses, String filename){
-	dldr * loader = DataLoader_ctor();
+PrgCourseArray* pc_loadFrom(String filename){
+	dldr* loader = DataLoader_ctor();
+	PrgCourseArray* coursesArray = ProgramCourseArray_ctor();
 	loader->vptr->newArray = &pc_newArray;
 	loader->vptr->newInstance = &pc_newInstance;
-	
-	courses = (prgcourse**) loader->vptr->loadFrom(loader, filename);
-	printf("size of courses: %i\n",sizeof(**courses));
-	
-	qsort(courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), pc_comparator);
-	return courses;
+	coursesArray = loader->vptr->loadFrom(loader,coursesArray, filename);
+/*	qsort((prgcourse**) (coursesArray->array),length(coursesArray), sizeof(courses), pc_comparator);*/
+	loader->vptr->dtor(loader);
+	return coursesArray;
 }
 
-int pc_indexOf(String acr, prgcourse** courses){
-	prgcourse* res;
-	prgcourse* key = ProgramCourse_ctor(acr, '\0', -1);
-	res= bsearch(key, courses, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), pc_comparator);
-
-	if (res==NULL)
-		return -1;
-	return (res - (prgcourse*) courses);
+int pc_indexOf(String acr, PrgCourseArray* courses){
+	/*prgcourse* res;*/
+	prgcourse* key = ProgramCourse_ctor(acr, '\0', -1, '\0', '\0');
+	int idx;
+	for(idx=0; idx<length(courses); ++idx)
+		if (pc_comparator(getArrayPosPC(courses,idx), key) ==0){
+			key->vptr->dtor(key);
+			return idx;
+	}	
+	key->vptr->dtor(key);
+	return -1;
 }
 
- 
+
