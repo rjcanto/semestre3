@@ -1,7 +1,7 @@
-all: Examvalidator MinDistValidator.so NoRepValidator.so MinDistDependentValidator.so
+all: ExamValidator MinDistValidator.so NoRepValidator.so MinDistDependentValidator.so MandatorySameDayValidator.so
 
 ExamValidator: ExamValidator.o myLib.o DataLoader.o ProgramCourse.o Exam.o
-	gcc -o ExamValidator ExamValidator.o myLib.o DataLoader.o ProgramCourse.o Exam.o -ldl
+	gcc -o ExamValidator ExamValidator.o myLib.o DataLoader.o ProgramCourse.o Exam.o -ldl	
 
 ExamValidator.o: ExamValidator.c ExamValidator.h
 	gcc -c -g -Wall -pedantic -o ExamValidator.o ExamValidator.c
@@ -17,7 +17,7 @@ ProgramCourse.o: ProgramCourse.c ProgramCourse.h
 
 Exam.o: Exam.c Exam.h
 	gcc -c -g -Wall -pedantic -o Exam.o Exam.c
-	
+
 MinDistValidator.so: MinDistValidator.o
 	gcc -shared -g -Wall -o MinDistValidator.so MinDistValidator.o -lm
 
@@ -27,6 +27,9 @@ NoRepValidator.so: NoRepValidator.o
 MinDistDependentValidator.so: MinDistDependentValidator.o
 	gcc -shared -g -Wall -o MinDistDependentValidator.so MinDistDependentValidator.o -lm
 	
+MandatorySameDayValidator.so: MandatorySameDayValidator.o
+	gcc -shared -g -Wall -o MandatorySameDayValidator.so MandatorySameDayValidator.o -lm
+	
 MinDistValidator.o: MinDistValidator.c MinDistValidator.h
 	gcc -c -g -Wall -pedantic -fPIC -o MinDistValidator.o MinDistValidator.c
 
@@ -35,6 +38,9 @@ NoRepValidator.o: NoRepValidator.c NoRepValidator.h
 
 MinDistDependentValidator.o: MinDistDependentValidator.c MinDistDependentValidator.h
 	gcc -c -g -Wall -pedantic -fPIC -o MinDistDependentValidator.o MinDistDependentValidator.c
+
+MandatorySameDayValidator.o: MandatorySameDayValidator.c MandatorySameDayValidator.h
+	gcc -c -g -Wall -pedantic -fPIC -o MandatorySameDayValidator.o MandatorySameDayValidator.c
 	
 clean:
 	rm -f ExamValidator *.so *.o *~

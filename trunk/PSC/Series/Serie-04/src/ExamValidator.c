@@ -4,6 +4,9 @@
 static ValidatorLoaderMethods valLoader_vtable={
 	valLdr_dtor,
 };
+static arrayMethods evArray_vtable={
+	evArray_dtor
+};
 
 void oneEV_dtor(oneEV* this){
 	if (this!=NULL)
@@ -31,13 +34,15 @@ void evArray_dtor(evArray* this){
 
 evArray* evArray_ctor(){
 	evArray* arr = (evArray*) (malloc(sizeof(evArray)));
-	arr->vptr->dtor = &evArray_dtor;
+	if (arr==NULL) mallocError("ExamValidator");
+	arr->vptr = &evArray_vtable;
 	arr->size=0;
 	return arr;
 }
 
 valLdr* valLdr_ctor(){
 	valLdr* aux = (valLdr*) malloc(sizeof(valLdr));
+	if (aux==NULL) mallocError("ExamValidator");
 	aux->vptr = &valLoader_vtable;
 	aux->loader = DataLoader_ctor(); 
 	aux->loader->vptr->newArray = &ev_newArray;
@@ -46,7 +51,8 @@ valLdr* valLdr_ctor(){
 }
 
 void** ev_newArray(int numEntries){
-	evArray* aux = (evArray*)malloc(sizeof(oneEV*) * numEntries); /*sizeof(oneEV*)=sizeof(twoEV*)*/
+	evArray* aux = (evArray*)malloc(sizeof(oneEV*) * numEntries);
+	if (aux==NULL) mallocError("ExamValidator");
 	aux->size=0;
 	return (void**)(aux);
 }
@@ -66,7 +72,7 @@ void* ev_newInstance(String* elems, int nbr){
 	String extLib;
 
 	extLib=getModuleFileName(elems[0]);
-	/*printf("extLib=<%s>\n",extLib); DEBUG*/
+	
 	/*aceder aos modulos externos*/
 	extMod = dlopen(extLib, RTLD_NOW);
 	
@@ -84,7 +90,8 @@ void* ev_newInstance(String* elems, int nbr){
 		printf("Erro: %s\n", dlerror());
 		return NULL;
 	}
-	((baseEV*) (res))->vptr->setArgs(res, elems[1]);
+	if(nbr>1)
+		((baseEV*) (res))->vptr->setArgs(res, elems[1]);
 	return res;
 }
 
@@ -128,39 +135,6 @@ String getModuleFileName(String name){
 	return aux;
 }
 
-/*DEBUG*/
-void pc_Print(arrayItem* arr){
-	int i,j=0;
-	String* aux2;
-	prgcourse* aux;
-	for(i=0; i<arr->size; ++i){
-		aux=getArrayPosPC(arr, i);
-		printf("num: %d - %s - %c - %d",i,getAcronym(aux), getType(aux), getTerms(aux));
-		aux2 = getSDep(aux);
-		j=0;
-		while(aux2[j]){
-			printf(" - %s;",(String)(aux2[j]));
-			++j;
-		}
-		j=0;
-		aux2 = getWDep(aux);
-		while(aux2[j]){
-			printf(" - %s;",(String)(aux2[j]));
-			++j;
-		}
-		printf("\n");
-	}
-}
-void e_Print(arrayItem* arr){
-	int i;
-	exam* aux;
-	for(i=0; i<arr->size; ++i){
-		aux=getArrayPosE(arr,i);
-		printf("num: %d : %s : %d : %d\n",i,getAcronym(getCourse(aux)), getDate1(aux), getDate2(aux));
-	}
-}
-
-
 int main(int argc, char** argv){
 	int res;
 	PrgCourseArray* courses;
@@ -176,15 +150,11 @@ int main(int argc, char** argv){
 	courses = pc_loadFrom(argv[1]);
 	printf("#ProgramCourse = %i\n", courses->size);
 	puts("---------------------");
-	
-	pc_Print(courses);
-	
+
 	exams = e_loadFrom(argv[2],courses);
 	printf("#Exams = %i\n", exams->size);
 	puts("---------------------");
-	
-	e_Print(exams);
-	
+
 	val1 = ev_loadFrom("./DataFile/Validators1.txt");
 	val2 = ev_loadFrom("./DataFile/Validators2.txt");
 	
@@ -194,7 +164,7 @@ int main(int argc, char** argv){
 	
 	courses->vptr->dtor(courses);
 	exams->vptr->dtor(exams);
-	/*val1->vptr->dtor(val1);*/
+	val1->vptr->dtor(val1);
 	val2->vptr->dtor(val2);
 
 	return 0;

@@ -18,21 +18,25 @@ String xstrtrim(String str){
 	int lenght;
 	
 	/*se String for vazia ou não definida retorna a String*/
-	if( str == NULL || str[0] == '\0')
+	if(str == NULL || *str == '\0')
             return str;
-	
+
 	start = str;
 	lenght=strlen(str);
-	end = str + lenght-1;
+	end = (str + lenght-1);
 	
 	/*retira os espaços no inicio e no fim*/
 	while(*start==' ') ++start;
 	while((*end==' ' || *end=='\r' || *end=='\n') && end>start) --end;
 	if(str+lenght-1 != end)
-	*(end+1) = '\0';
-	
+		*(end+1) = '\0';
+
 	/*se String apenas tinha espacos torna-a vazia*/
 	if(end < start)
+		*str='\0';
+	/*se String apenas tiver os caracteres de carriage return ou new line
+	 * devolve String vazia*/
+	if(*str=='\r' || *str=='\n')
 		*str='\0';
 		
 	/* para os casos em que a string foi definida dinamicamente e
@@ -46,4 +50,9 @@ String xstrtrim(String str){
 		*end = '\0';
 	}
   return str;
+}
+
+void mallocError(String str){
+	puts("%s: malloc falhou.");
+	exit(1);
 }

@@ -19,7 +19,6 @@ static examLoaderMethods examLoader_vtable={
 
 void Exam_dtor(exam *this){
 	if (this!=NULL){
-		/*this->course->vptr->dtor(this->course);*/ /*destrutor de exam não pode apagar dados do array prgcourses recebidoS*/
 		free(this);
 	}
 }
@@ -41,6 +40,7 @@ void ExamLoader_dtor(examldr* this){
 
 exam* Exam_ctor(prgcourse* course, int date1, int date2){
 	exam *e = (exam*) malloc(sizeof(exam));
+	if (e==NULL) mallocError("Exam");
 	e->vptr = &exam_vtable;
 	e->course = course;
 	e->date1 = date1;
@@ -50,6 +50,7 @@ exam* Exam_ctor(prgcourse* course, int date1, int date2){
 
 ExamArray* ExamArray_ctor(){
 	ExamArray* arr = (ExamArray*) (malloc(sizeof(ExamArray)));
+	if (arr==NULL) mallocError("Exam");
 	arr->vptr = &examArray_vtable;
 	arr->size=0;
 	return arr;
@@ -57,6 +58,7 @@ ExamArray* ExamArray_ctor(){
 
 examldr* ExamLoader_ctor(ExamArray* courses){
 	eldr = malloc(sizeof(examldr));
+	if (eldr==NULL) mallocError("Exam");
 	eldr->vptr = &examLoader_vtable;
 	eldr->loader = DataLoader_ctor(); 
 	eldr->loader->vptr->newArray = &e_newArray;
@@ -67,6 +69,7 @@ examldr* ExamLoader_ctor(ExamArray* courses){
 
 void** e_newArray(int numEntries){
 	void** aux = malloc(sizeof(exam*) * numEntries);
+	if (aux==NULL) mallocError("Exam");
 	return aux;
 }
 
@@ -117,3 +120,4 @@ int e_indexOf(String acr, ExamArray* examsArr){
 		}
 	return -1;
 }
+

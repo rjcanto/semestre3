@@ -12,6 +12,7 @@ static dldrMethods dldr_vtable={
 
 dldr* DataLoader_ctor(){
 	dldr* d = (dldr *)malloc(sizeof(dldr));
+	if(d==NULL) mallocError("DataLoader");
 	d->input = NULL;
 	d->vptr = &dldr_vtable; 
 	return d;
@@ -29,8 +30,6 @@ arrayItem* loadFrom(dldr* this, arrayItem* arr, String filename){
 		exit(1);
 	}
 	this->input = xpto;
-	/*DEBUG*/
-	/*puts(filename);*/
 	this->vptr->build(this,arr,0);
 	fclose(this->input);
 	return arr;
@@ -39,10 +38,13 @@ arrayItem* loadFrom(dldr* this, arrayItem* arr, String filename){
 arrayItem* build(dldr* this, arrayItem* arr, int n){
 	int idx=0, i=0;
 	ItemType* item=NULL;
-	String line = (String) malloc(sizeof(char)*MAX_LINE_SZ+1);
+	String line ;
 	String* elems; 
 
-	if ((fgets(line, 30,this->input))==NULL){
+	line = (String) malloc(sizeof(char)*MAX_LINE_SZ+1);
+	if (line==NULL) mallocError("DataLoader");
+	
+	if ((fgets(line, MAX_LINE_SZ,this->input))==NULL){
 		if (!feof(this->input)){
 			free(line);
 			return NULL;	/*THROW(IO_ERROR_EXCEPTION);*/
@@ -56,10 +58,10 @@ arrayItem* build(dldr* this, arrayItem* arr, int n){
 	}
 	
 	elems = (String*) malloc(sizeof(String)*MAX_ITEMS);
-		
+	if (elems==NULL) mallocError("DataLoader");
+	
 	/*contar o num de tokens e alocar espaco do elems*/
 	/*assumimos que existem um maximo de MAX_ITEMS por linha*/
-		
 	while((elems[idx]=strtok(line,"\\|"))!=NULL){
 		++idx;
 		line=NULL;
@@ -82,8 +84,6 @@ arrayItem* build(dldr* this, arrayItem* arr, int n){
 	}
 	return this->vptr->build(this,arr, n);	
 }
-
-
 
 
 

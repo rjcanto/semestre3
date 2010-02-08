@@ -49,7 +49,6 @@ struct BaseExamValidator{
 struct OneExamValidator{
 	OneEVMethods*	vptr;
 };
-
 struct TwoExamValidator{
 	TwoEVMethods*	vptr;
 };
@@ -57,7 +56,6 @@ struct TwoExamValidator{
 typedef struct ValidatorLoader_vtable{
 	void		(*dtor)			(valLdr * this);
 } ValidatorLoaderMethods;
-
 struct ValidatorLoader{
 	ValidatorLoaderMethods* 	vptr;
 	dldr*						loader;

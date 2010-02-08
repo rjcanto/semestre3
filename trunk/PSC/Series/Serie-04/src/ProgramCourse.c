@@ -34,7 +34,8 @@ void ProgramCourseArray_dtor(PrgCourseArray* this){
 String* processDependents(String str){
 	int i, idx=0;
 	String* depUC = (String*) malloc(sizeof(String)*(MAX_DEP_UC+1));
-		
+	if (depUC==NULL) mallocError("ProgramCourse");
+	
 	while((depUC[idx]=strtok(str,";"))!=NULL){
 		++idx;
 		str=NULL;
@@ -47,8 +48,10 @@ String* processDependents(String str){
 
 prgcourse* ProgramCourse_ctor(String acronym, char type, int terms, String sdep, String wdep){
 	prgcourse *p = (prgcourse *)malloc(sizeof(prgcourse));
+	if (p==NULL) mallocError("ProgramCourse");
 	if (acronym){
 		p->acronym = (String) malloc(strlen(acronym)+1*sizeof(char));
+		if (p->acronym==NULL) mallocError("ProgramCourse");
 		strcpy(p->acronym,acronym);
 	}
 	p->sdep = processDependents(sdep);
@@ -61,6 +64,7 @@ prgcourse* ProgramCourse_ctor(String acronym, char type, int terms, String sdep,
 
 PrgCourseArray* ProgramCourseArray_ctor(){
 	PrgCourseArray* aux= (PrgCourseArray*) (malloc(sizeof(PrgCourseArray)));
+	if (aux==NULL) mallocError("ProgramCourse");
 	aux->vptr = &prgcourseArray_vtable;
 	aux->size=0;
 	return aux;
@@ -68,6 +72,7 @@ PrgCourseArray* ProgramCourseArray_ctor(){
 
 void** pc_newArray(int numEntries){
 	void** aux =  malloc(sizeof(prgcourse*) * numEntries);
+	if (aux==NULL) mallocError("ProgramCourse");
 	return aux;
 }
 
@@ -115,5 +120,3 @@ int pc_indexOf(String acr, PrgCourseArray* courses){
 	key->vptr->dtor(key);
 	return -1;
 }
-
-
