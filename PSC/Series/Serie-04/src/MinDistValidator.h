@@ -2,19 +2,30 @@
 #define MINDISTVALIDATOR_H
 
 #include <stdio.h>
+#include "myLib.h"
+#include "ExamValidator.h"
 
 typedef struct MinDistValidator mdv;
 
 typedef struct mdv_Methods{
-	static	void 	(*dtor) 	(mdv *this);
-	static	void 	(*setArgs) 	(mdv* this, String dest);
-	static	String 	(*ruleName) (mdv* this);
-	static	int 	(*isValid) 	(mdv* this, Exam *exam);
+	void 		(*dtor) 	(oneEV* this);
+	String		(*ruleName) ();
+	void 		(*setArgs) 	(oneEV* this, String dest);
+	int 		(*isValid) 	(oneEV* this, exam* ex);
 } mdvMethods;
 
 struct MinDistValidator{
-	mdvMethods *vptr;
-	static int minDist = 13;
-	}
-	
+	mdvMethods* vptr;
+	int minDist;
+};
+
+#define getMinDist(this)		(((const mdv * const)(this))->minDist)
+
+void* 	ctor();
+void 	dtor			(oneEV* this);
+void 	setArgs			(oneEV* this, String dest);
+String 	ruleName		();
+int 	isValid			(oneEV* this, exam* ex);
+int		mdv_parseInt	(const String string);
+
 #endif

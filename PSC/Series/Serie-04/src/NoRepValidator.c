@@ -1,35 +1,39 @@
 #include <stdio.h>
-#include 'myLib.h'
-#include 'NoRepValidator.h';
+#include "myLib.h"
+#include "NoRepValidator.h"
 
 
 static nrvMethods nrv_vtable={
 	dtor,
-	setArgs,
 	ruleName,
+	setArgs,
 	isValid
 };
 
-nrv* nrv_ctor(){
-	nrv* n = (nrv *)malloc(sizeof(nrv));
-	n->vptr = &nrv_table;                     
-	return n;
+void* ctor(){
+	nrv* n = (nrv*)malloc(sizeof(nrv));
+	n->vptr = &nrv_vtable;                     
+	return (void*)(n);
 }
 
-static void setArgs (nrv* this, String dest){
-	this->minDist = parseInt(dest);
+void dtor(twoEV* this){
+	if (this != NULL)
+		free(this);
 }
 
-static String ruleName (nrv* this){
+void setArgs (twoEV* this, String dest){
+}
+
+String ruleName (){
 	return "Sobreposicoes nao se repetem nas duas epocas.";
 }
 
-static boolean isValid(nrv* this, Exam *exam1, Exam *exam2){
-	return (exam1->vptr->date1() != exam2->vptr->date1() ||
-			exam1->vptr->date2() != exam2->vptr->date2());
+int isValid(twoEV* this, exam *exam1, exam *exam2){
+	return (getDate1(exam1) != getDate1(exam2) ||
+			getDate2(exam1) != getDate2(exam2));
 }
 
-static void dtor(nrv *this){
-	if (this != null)
-		free(this);
-}
+
+
+
+

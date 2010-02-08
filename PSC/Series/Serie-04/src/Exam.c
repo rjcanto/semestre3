@@ -1,84 +1,119 @@
 #include "Exam.h"
 
-static void 	Exam_dtor		(exam *this);
-static void		Exam_cleanup	(exam **this);
-static int		e_comparator	(exam *pc1, exam* pc2);
-static exam**	e_loadFrom		(exam **this, String filename, prgcourse** courses);
-static int 		e_indexOf		(String acr, exam** exams);
-static exam**	e_newArray		(int numEntries);
-static exam* 	e_newInstance	(String* elems);
+examldr* eldr;
 
 static examMethods exam_vtable={
 	Exam_dtor,
-	Exam_cleanup,
 	e_comparator,
 	e_loadFrom,
 	e_indexOf
 };
 
-static void Exam_dtor(exam *this){
+static arrayMethods examArray_vtable={
+	ExamArray_dtor
+};
+
+static examLoaderMethods examLoader_vtable={
+	ExamLoader_dtor,
+};
+
+void Exam_dtor(exam *this){
 	if (this!=NULL){
-		this->course->vptr->dtor(this->course);
+		/*this->course->vptr->dtor(this->course);*/ /*destrutor de exam não pode apagar dados do array prgcourses recebidoS*/
+		free(this);
+	}
+}
+
+void ExamArray_dtor(ExamArray* this){
+	int i;
+	for (i=0; i<this->size; ++i)
+		getArrayPosE(this,i)->vptr->dtor(getArrayPosE(this,i));
+	free(getArrayE(this));
+	free(this);
+}
+
+void ExamLoader_dtor(examldr* this){
+	if (this!=NULL){
 		this->loader->vptr->dtor(this->loader);
 		free(this);
 	}
 }
 
-static void Exam_cleanup(exam** this){
-	int i, size = sizeof(this)/sizeof(this[0]);
-	for (i=0; i<size; ++i)
-		this[i]->vptr->dtor(this[i]);
-}
-	
-static exam* Exam_ctor(prgcourse course, int date1, int date2){
+exam* Exam_ctor(prgcourse* course, int date1, int date2){
 	exam *e = (exam*) malloc(sizeof(exam));
 	e->vptr = &exam_vtable;
 	e->course = course;
 	e->date1 = date1;
 	e->date2 = date2;
-	
-	/*p->loader = DataLoader_ctor();
-	p->loader->vptr->newArray = &pc_newArray;
-	p->loader->vptr->newInstance = &pc_newInstance;*/
-	
 	return e;
 }
 
-static exam** e_newArray(int numEntries){
-	exam** aux = (exam**) malloc(sizeof(exam*) * numEntries);
+ExamArray* ExamArray_ctor(){
+	ExamArray* arr = (ExamArray*) (malloc(sizeof(ExamArray)));
+	arr->vptr = &examArray_vtable;
+	arr->size=0;
+	return arr;
+}
+
+examldr* ExamLoader_ctor(ExamArray* courses){
+	eldr = malloc(sizeof(examldr));
+	eldr->vptr = &examLoader_vtable;
+	eldr->loader = DataLoader_ctor(); 
+	eldr->loader->vptr->newArray = &e_newArray;
+	eldr->loader->vptr->newInstance = &e_newInstance;
+	eldr->coursesArray = courses;
+	return eldr;
+}
+
+void** e_newArray(int numEntries){
+	void** aux = malloc(sizeof(exam*) * numEntries);
 	return aux;
 }
-/* em falta */
-static exam* e_newInstance(String* elems){
-	char type;
-	int trms;	
-	if (elems[0] == NULL) 
-		return NULL;
-	type = ((strlen(elems[1])==1) ? (*elems[1]):'\0');
-	if (strlen(elems[2])<10){
+
+void* e_newInstance(String* elems, int nbr){
+	int index;
+	int num1=INT_MIN_VALUE, num2=INT_MIN_VALUE;
+	index = pc_indexOf(elems[0], eldr->coursesArray);
+	if (index<0) return NULL;
+	if (strlen(elems[1])<4){
 		TRY{
-		trms=parseInt(jmp, elems[2]);
+		num1=parseInt(jmp, elems[1]);
 		} CATCH(INT_EXCEPTION){
-			trms=-1;
+			num1=INT_MIN_VALUE;
 		}
 		}	/* END OF TRY BLOCK */
 	}
-	return Exam_ctor(elems[0], type, trms);
+	if (nbr>1){
+		TRY{
+		num2=parseInt(jmp, elems[2]);
+		} CATCH(INT_EXCEPTION){
+			num2=INT_MIN_VALUE;
+		}
+		}	/* END OF TRY BLOCK */		
+	}
+	return (void*) Exam_ctor(getArrayPosPC(eldr->coursesArray,index),num1, num2); 
 }
 
-static int e_comparator(exam *e1, exam *e2){
-	return (strcmp(e1->course->acronym, e2->course->acronym)); 
+int e_comparator(const void* e1, const void* e2){
+	return (strcmp(getAcronym(getCourse(e1)), getAcronym(getCourse(e2)))); 
 }
 
-static exam** e_loadFrom(exam** this, String filename, prgcourse** courses){
-	exam** exams = (exam**) loadFrom(loader, filename);
-	qsort(this, sizeof(courses)/sizeof(courses[0]), sizeof(courses[0]), courses[0]->vptr->comparator);
-	return exams;
+ExamArray* e_loadFrom(String filename, ExamArray* courses){
+	ExamArray* examArr = ExamArray_ctor();
+	eldr = ExamLoader_ctor(courses);
+	examArr = eldr->loader->vptr->loadFrom(eldr->loader, examArr, filename);
+	/*qsort((exam**)(examArr->array),length(examArr), sizeof(exam), e_comparator);*/
+	eldr->vptr->dtor(eldr);
+	return examArr;
 }
 
-static int indexOf(String acr, exam** exams){
-	exam* res;
-	exam* key = Exam_ctor(acr, '\0', -1);
-	return ((res=bsearch(key, exams, sizeof(exams)/sizeof(exams[0]), sizeof(exams[0]), exams[0]->vptr->comparator))?(res-exams):-1);
+int e_indexOf(String acr, ExamArray* examsArr){
+	int idx;
+	exam* key = Exam_ctor(ProgramCourse_ctor(acr,0,-1,'\0','\0'), '\0', -1);
+	for(idx=0; idx<length(examsArr);++idx)
+		if(e_comparator(getArrayPosE(examsArr,idx),key) == 0){
+			key->vptr->dtor(key);
+			return idx;
+		}
+	return -1;
 }
-

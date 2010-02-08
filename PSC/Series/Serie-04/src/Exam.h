@@ -7,40 +7,52 @@
 #include "myLib.h"
 #include "DataLoader.h"
 #include "ProgramCourse.h"
+#define INT_MIN_VALUE -32767
 /*#define IO_ERROR_EXCEPTION 0xFFFC*/
 
 typedef struct Exam exam;
 typedef struct ExamLoader examldr;
+typedef struct ItemTypeArray ExamArray;
 
 typedef struct Exam_vtable{
 	void 		(*dtor) 			(exam *this);
-	void		(*dtor_array)		(exam **this);
-	int			(*comparator)		(exam *pc1, exam* pc2);
-	exam**		(*loadFrom)			(exam **this, String filename, prgcourse** courses);
-	int 		(*indexOf)			(String acr, exam** exams);
+	int			(*comparator)		(const void *e1, const void* e2);
+	arrayItem*	(*loadFrom)			(String filename, ExamArray* courses);
+	int 		(*indexOf)			(String acr, ExamArray* examsArr);
 } examMethods;
 
 struct Exam{
-	examMethods *vptr;
-	prgcourse course;
-	int date1;
-	int date2;
-	dldr* loader;
+	examMethods* 	vptr;
+	prgcourse* 		course;
+	int 			date1;
+	int 			date2;
 };
 
 typedef struct ExamLoader_vtable{
-	void			(*dtor)				(examldr * this);
+	void	(*dtor)				(examldr * this);
 } examLoaderMethods;
 
 struct ExamLoader{
-	examldr	*vptr;
-	prgcourse* courses;
-}
+	examLoaderMethods* 	vptr;
+	dldr* 				loader;
+	PrgCourseArray* 	coursesArray;
+};
 
+void 		Exam_dtor		(exam *this);
+void 		ExamArray_dtor	(ExamArray* this);
+void 		ExamLoader_dtor	(examldr* this);
+exam* 		Exam_ctor		(prgcourse* course, int date1, int date2);
+ExamArray* 	ExamArray_ctor	();
+int			e_comparator	(const void * e1, const void * e2);
+ExamArray*	e_loadFrom		(String filename, ExamArray* courses);
+int 		e_indexOf		(String acr, ExamArray* examsArr);
+void**		e_newArray		(int numEntries);
+void* 		e_newInstance	(String* elems, int nbr);
 
-
-#define course(this)		(((const exam * const)(this))->course)
-#define date1(this)			(((const exam * const)(this))->date1)
-#define date2(this)			(((const exam * const)(this))->date2)
+#define getCourse(this)		(((const exam * const)(this))->course)
+#define getDate1(this)		(((const exam * const)(this))->date1)
+#define getDate2(this)		(((const exam * const)(this))->date2)
+#define getArrayE(this)		((exam**)(this->array))
+#define getArrayPosE(var,i)	((exam*)(var->array[i]))
 		   
 #endif
