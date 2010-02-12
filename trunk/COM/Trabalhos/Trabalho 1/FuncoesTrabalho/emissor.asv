@@ -1,0 +1,20 @@
+function [yF,FS]= emissor(signal,Fo)
+    carrierFS=10000;
+    
+\FS=2.2*carrierFS;
+    else
+            FS=3.2*Fo;
+    end
+    t=0:1:length(signal)-1;
+    figure;
+    my_analysis(signal,Fo); 
+
+    %Sinal da Portadora
+    aT=cos(((2*pi*carrierFS)/FS)*t)';
+
+    yT=aT.*signal;
+    yF=fft(yT);
+    
+    figure;
+    my_analysis(yT,FS); 
+end

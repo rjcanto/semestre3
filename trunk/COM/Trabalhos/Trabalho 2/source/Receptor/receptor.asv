@@ -1,0 +1,6 @@
+function [] = receptor(signal,FS,modulationType)
+
+    at=
+
+
+end

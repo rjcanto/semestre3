@@ -1,0 +1,14 @@
+function [xT,TS]= receptor(signal,FS)
+    carrierFS=10000;
+    %Sinal da Portadora
+    %aT=cos(((2*pi*carrierFS)/FS)*t)';
+
+    TS=1/(carrierFS);
+    yT=sinc(TS);
+    yF=abs(fft(yT));
+    wF=(signal.*yF);
+    xT=ifft(wF-);
+    %analise do sinal
+    figure('name','Sinal à Saída do Receptor.');
+    my_analysis(xT,1/TS);
+end

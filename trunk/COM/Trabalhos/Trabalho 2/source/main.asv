@@ -1,0 +1,8 @@
+function[]=main()
+
+
+    emissor(signal,Fo,Mod);
+    
+    
+
+end 

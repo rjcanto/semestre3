@@ -1,0 +1,29 @@
+function []=t3()
+    %Frequencia fundamental entre a(t) e x(t) é de 2000Hz, uma vez que esta
+    %frequencia é o minimo divisor comum entre a fequencia de a(t) e de
+    %x(t).
+    fo=2000;
+    
+    %Para respeitar o ritmo de Nyquist, a frequência de amostragem é maior
+    %que duas vezes o valor da frequencia fundamental.
+    FS=2.1*fo;
+    To=1/fo;
+    
+    
+    t=1:1/FS;
+    
+    
+    %Expressões obtidas pelo enunciado.
+    a=cos(2*pi*10000*t);
+    x=1 + cos(2*pi*2000*t);
+    
+    %Expressão obtida pelo diagrama de blocos do Emissor:
+    y=x'*a;
+
+   plot(x'*a);
+   figure;
+   plot(x*a');
+    
+    
+
+end

@@ -1,0 +1,24 @@
+function [yF,FS,t,n]= emissor(signal,Fo,Mod)
+    aT=Portadora(Fo);
+    if (strcmpi(Mod,'OOK'))
+        %Modelação OOK
+        [FS,Signal,t,n]=OOK(signal,1,0,Fo);
+    elseif(strcmpi(Mod,'PSK'))
+        %Modelação PSK
+        [FS,Signal,t,n]=PSK(signal,1,-1,Fo);
+    else
+        fprintf('Modulação indicada é ínválida.\n');
+        return;
+    end
+
+      modula(signal,amplierFactor,CarrierFreq,timebase)
+
+    Signal
+    aT
+    length(Signal)
+    yT=aT.*Signal;
+%    figure('name','Sinal yT à Saida do Emissor');
+%    my_analysis(yT,FS); 
+
+    yF=fft(yT);
+end
