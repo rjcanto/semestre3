@@ -1,0 +1,11 @@
+% Modifique a função anterior de forma a que, para além da adição de 
+% ru´?do, o canal de transmiss˜ao realize tamb´em filtragem do tipo 
+% passa-baixo com frequˆencia de corte program´avel (fun¸c˜ao tx2)
+
+function [Y]=tx2(signal,SNR,fs)
+    signal_F=fftshift(fft(signal));
+
+    Filtro=filtroPassaBaixo(fs);
+    signal=ifft(signal_F.*Filtro);
+Y=tx1(signal,SNR);
+end

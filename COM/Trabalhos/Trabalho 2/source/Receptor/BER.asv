@@ -1,0 +1,11 @@
+function Result=BER(InSignal,Fo,Mod)
+    SNR=0;
+    type=1;
+
+    [signal,FS,TB,n]=emissor(InSignal,Fo,Mod);
+    
+    %signal=TX(signal,SNR,type);
+    
+    %OutSignal=receptor(signal,FS,TB,Mod);
+
+end 

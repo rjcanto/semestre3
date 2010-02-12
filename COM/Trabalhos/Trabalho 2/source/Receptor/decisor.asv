@@ -1,0 +1,20 @@
+function [result] = BinaryDecision(Signal,Tb,Modulation)
+    test=A*A*Tb/2;
+    
+    if (strcmpi(Modulation,'OOK'))
+            if (Signal>test)
+                result = 1;
+            else
+                result =0;
+            end
+    elseif(strcmpi(Modulation,'PSK'))
+            if (Signal > 0)
+                result = 1;
+            else
+                result =0;
+            end
+    else
+        
+    end
+    
+end

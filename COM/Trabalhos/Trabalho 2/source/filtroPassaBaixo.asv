@@ -1,0 +1,14 @@
+function [Filtro] = filtroPassaBaixo(fs)
+    Filtro=1:4*fs;
+
+    leftLimit=floor(fs/2);
+    rightLimit=fs + floor(fs/2);
+
+    for i=1:4*fs
+        if (i<=leftLimit || (i>rightLimit && i< 2*fs + leftLimit)  )
+            Filtro(i)=0;
+        else
+            Filtro(i)=1;
+        end
+    end
+end

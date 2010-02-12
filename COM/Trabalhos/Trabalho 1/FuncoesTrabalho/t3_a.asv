@@ -1,0 +1,4 @@
+%Frequencia de amostragem > 2 *  Frequencia do sinal.
+function []=t3_b()
+    
+end
