@@ -1,0 +1,33 @@
+%
+%Precisa de ser revisto
+%
+function [result]= correlador(Signal,TB,FS,Modulation)
+
+    bitsLen=FS;    
+    t=0:1/(FS-1):1;
+
+    bitsnbr=length(Signal)/FS; %6 bits
+    tmpY=zeros(1,bitsLen);
+    tmp=zeros(1,bitsLen);
+    result=zeros(1,bitsnbr);
+
+
+    for i=1:bitsnbr
+        count=bitsLen;
+        while (count>0)
+            idx=(i-1)*bitsLen+count;
+            tmpY(count)=Signal(idx);
+            count=count-1;
+        end
+        
+        tmp=tmpY.*sin(2*pi*10000*t);
+        T=avg
+        Y=sum(tmpY.*sin(2*pi*10000*t));
+
+        result(i)=decisor(Y,sum(tmpY.*tmpY),bitsLen,Modulation);
+    end
+        figure
+        plot(result)
+        axis([0,20,-5,5])
+        title('Sinal result');
+end
