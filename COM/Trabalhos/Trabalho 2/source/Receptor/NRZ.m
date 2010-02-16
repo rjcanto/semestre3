@@ -44,22 +44,22 @@ function [RB,myX,mynX,TB]=NRZ(signal,Amp,CarrierFreq)
 	mynX= 1:RB*nbrBits;
 	
     %Ciclo que vai criar a onda quadrada
+    j=1;
 	for i=1:nbrBits
 		for  k=1:RB
 			if( signal(i) == 1)
-				myX(k)=Amp;
-				mynX(k)=0;
-				k=k+1;
+				myX(j)=Amp;
+				mynX(j)=0;
 			else
- 				myX(k)=0;
- 				mynX(k)=Amp;
- 				k=k+1;
-            end 
+ 				myX(j)=0;
+ 				mynX(j)=Amp;
+            end
+            j=j+1;
 		end
     end
 
-    figure;
-    plot(n,myX);
-    title('Sinal após condificação NRZ');
+%     figure;
+%     plot(n,myX);
+%     title('Sinal após condificação NRZ');
 
 end

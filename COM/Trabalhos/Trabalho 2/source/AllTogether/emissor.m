@@ -10,7 +10,7 @@ function [yF,FS,TB]= emissor(signal,Fo,Mod)
         fprintf('Modulação indicada é ínválida.\n');
         return;
     end
-    aT=cos(2*pi*Fo*TB);
-    yT=aT.*Signal;
-    yF=fft(yT);
+    
+   %yF=fft(Signal);
+   yF=Signal;
 end
