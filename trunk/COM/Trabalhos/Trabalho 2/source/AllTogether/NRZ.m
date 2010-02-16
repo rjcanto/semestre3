@@ -32,6 +32,7 @@ function [FS,myX,mynX,n]=NRZ(signal,Amp,CarrierFreq)
 	
     %Frequencia Fundamental de Saída, respeitando o Ritmo de Nyquist
 	FS=2.2*(1/(nrzTs));
+%    FS=2.2*10;
     if (FS > CarrierFreq)
         fprintf('A frequencia da portadora é inferior à frequencia de amostragem do sinal amostrado. Não vai ser possível reconstruir com exactidão o sinal.\n'); 
     end

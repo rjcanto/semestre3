@@ -9,7 +9,7 @@ function [RS,mySignal,TB] = codificador(signal,A,B,fo)
 	
 	Amp=5;
 	[RS,Xt,nXt,TB]=NRZ(signal,Amp,fo);
-	x1T = modula(Xt,A,fo,RS);
-	x2T = modula(nXt,B,fo,RS);
+	x1T = modula(Xt,A,RS);
+	x2T = modula(nXt,B,RS);
 	mySignal=x1T + x2T;
 end

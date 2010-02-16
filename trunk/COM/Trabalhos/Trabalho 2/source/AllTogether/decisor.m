@@ -3,16 +3,15 @@
 %
 
 function [result] = decisor(Signal,Tb,Modulation)
-    Eb=Signal*Signal*Tb;
-
     if (strcmpi(Modulation,'OOK'))
-            if (Signal/2 > Eb)
+		Eb=5*5*Tb/2;
+            if (Signal > Eb/2)
                 result = 1;
             else
                 result =0;
             end
     elseif(strcmpi(Modulation,'PSK'))
-            if (Signal > Eb)
+		    if (Signal > 0)
                 result = 1;
             else
                 result =0;
@@ -22,5 +21,4 @@ function [result] = decisor(Signal,Tb,Modulation)
         result=-1;
         return;
     end
-    
 end

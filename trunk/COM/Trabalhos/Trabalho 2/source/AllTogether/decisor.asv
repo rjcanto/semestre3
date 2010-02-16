@@ -2,18 +2,17 @@
 %Precisa de ser corrigido
 %
 
-function [result] = decisor(Signal,A,Tb,Modulation)
-    
-    test=(A*A)*TB/2;
-
+function [result] = decisor(Signal,Tb,Modulation)
     if (strcmpi(Modulation,'OOK'))
-            if (Signal>test)
+		Eb=Signal*Signal*Tb;
+            if (Eb > 2.5)
                 result = 1;
             else
                 result =0;
             end
     elseif(strcmpi(Modulation,'PSK'))
-            if (Signal > 0)
+		Eb=Signal;
+            if (Eb > 0)
                 result = 1;
             else
                 result =0;
@@ -23,5 +22,4 @@ function [result] = decisor(Signal,A,Tb,Modulation)
         result=-1;
         return;
     end
-    
 end
