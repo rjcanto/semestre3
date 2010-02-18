@@ -7,9 +7,8 @@ function [FS,mySignal,t] = codificador(signal,A,B,Fo)
 		return;
 	end
 	
-	Amp=20;
-	[FS,Xt,nXt,n]=NRZ(signal,Amp,Fo);
-	%t=0:1/(FS-1):1;
+	[TB,Amp]=NRZValues();
+	[FS,Xt,nXt,n]=NRZ(signal,Amp,TB,Fo);
     t=n;
 	x1T = modula(Xt,A,Fo,t);
 	x2T = modula(nXt,B,Fo,t);

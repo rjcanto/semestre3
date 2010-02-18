@@ -5,6 +5,7 @@
 function [Y]=tx2(signal,SNR,FS)
     signal_F=fftshift(fft(signal));
     Filtro=filtroPassaBaixo(FS);
+    
     signal=ifft(signal_F.*Filtro);
 	Y=tx1(signal,SNR);
 end

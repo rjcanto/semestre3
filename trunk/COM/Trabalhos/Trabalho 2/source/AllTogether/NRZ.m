@@ -7,32 +7,32 @@
 %Retorno:
 %FS - Frequencia de Amostragem, Respeitando o Ritmo de Nyquist
 %myX - Sinal de retorno codificado com o NRZ.
-function [FS,myX,mynX,n]=NRZ(signal,Amp,CarrierFreq)
+function [FS,myX,mynX,n]=NRZ(signal,Amp,TB,CarrierFreq)
 	if(nargin == 0)
 		fprintf('É necessário mais argumentos.\n');
 		return;
-	elseif(nargin >3)
+	elseif(nargin >4)
 		fprintf('Têm argumentos a mais.\n');
 		return;
-	elseif (nargin == 1)
+	elseif (nargin == 2)
 		fprintf('Assumindo a Amplitude 5 e frequencia da portadora de 100Hz.\n');	
 		CarrierFreq=100;
 		Amp=5;
-	elseif (nargin == 2)
+	elseif (nargin == 3)
 		fprintf('Assumindo a frequencia da portadora de 100Hz.\n');	
 		CarrierFreq=100;
 	end
 		
 
 	%Tempo de Bit do Nosso NRZ
-	nrzTs=0.001;
+	nrzTs=TB;
 
     %Numero de elementos do sinal de entrada
 	nbrBits=length(signal);	
 	
     %Frequencia Fundamental de Saída, respeitando o Ritmo de Nyquist
 	FS=2.2*(1/(nrzTs));
-%    FS=2.2*10;
+    %FS=2.2*10;
     if (FS > CarrierFreq)
         fprintf('A frequencia da portadora é inferior à frequencia de amostragem do sinal amostrado. Não vai ser possível reconstruir com exactidão o sinal.\n'); 
     end

@@ -2,10 +2,9 @@
 % fs.
 
 function [Filtro] = filtroPassaBaixo(fs)
-    Filtro=1:fs;
-    leftLimit=floor(fs/4);
-    rightLimit=fs + floor(fs/4);
-
+    Filtro=1:2*fs;
+    leftLimit=floor(fs/2);
+    rightLimit=fs + floor(fs/2);
     for i=1:fs
         if (i<=leftLimit || i>rightLimit )
             Filtro(i)=0;
