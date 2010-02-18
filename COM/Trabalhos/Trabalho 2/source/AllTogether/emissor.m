@@ -1,4 +1,4 @@
-function [yF,FS,TB]= emissor(signal,Fo,Mod)
+function [Signal,FS,TB]= emissor(signal,Fo,Mod)
     
     if (strcmpi(Mod,'OOK'))
         %Modelação OOK
@@ -10,7 +10,4 @@ function [yF,FS,TB]= emissor(signal,Fo,Mod)
         fprintf('Modulação indicada é ínválida.\n');
         return;
     end
-    
-   %yF=fft(Signal);
-   yF=Signal;
 end

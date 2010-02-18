@@ -1,11 +1,10 @@
-function [OutSignal]=main(InSignal,Fo,Mod)
+function [OutSignal]=main(InSignal,Fo,Mod,t)
     SNR=0;
-    type=1;
+    type=t;
 	%InSignal
-    [signal_F,FS,TB]=emissor(InSignal,Fo,Mod);
-    signal_F=TX(signal_F,SNR,type,FS);
-    OutSignal=receptor(signal_F,FS,TB,Mod);
+    [signal,FS,TB]=emissor(InSignal,Fo,Mod);
+    [signal]=TX(signal,SNR,type,FS);
+    OutSignal=receptor(signal,FS,TB,Mod)
 
     BER(InSignal,OutSignal)
-
 end 

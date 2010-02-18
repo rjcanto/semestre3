@@ -3,16 +3,16 @@
 %
 
 function [result] = decisor(Signal,Tb,Modulation)
+    [TB,Amp]=NRZValues();
     if (strcmpi(Modulation,'OOK'))
-		Eb=Signal*Signal*Tb;
-            if (Eb > 2.5)
+		Eb=Amp*Amp*Tb/2;
+            if (Signal > Eb/2)
                 result = 1;
             else
                 result =0;
             end
     elseif(strcmpi(Modulation,'PSK'))
-		Eb=Signal;
-            if (Eb > 0)
+		    if (Signal > 0)
                 result = 1;
             else
                 result =0;
