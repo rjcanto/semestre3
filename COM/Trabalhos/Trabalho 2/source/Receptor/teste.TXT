@@ -1,0 +1,4 @@
+Realize o menor n´umero de modifica¸c˜oes sobre o SCD implementado de forma a que este opere com modula¸c˜ao
+QAM, com M n´iveis `a sua escolha. O sistema dever´a utilizar o c´odigo corrector de erros do exerc´icio anterior.
+Recorrendo `as fun¸c˜oes file2bit, bit2file, image2bit e bit2image, utilize o sistema para transmiss˜ao de
+ficheiros de texto e imagens. Avalie o BER para diferentes valores de rela¸c˜ao sinal-ru´ido.
