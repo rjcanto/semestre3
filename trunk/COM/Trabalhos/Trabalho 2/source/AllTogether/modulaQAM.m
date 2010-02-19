@@ -1,5 +1,8 @@
-function [mysignal]=modulaQAM(signal,amplierFactor,CarrierFreq,timebase)
-    c=cos(2*pi*CarrierFreq*timebase);
-    s=-sin(2*pi*CarrierFreq*timebase);
-	mysignal= signal.*(amplierFactor*c) + signal.*(amplierFactor*s);
+function [mysignal]=modulaQAM(signal,nsignal,CarrierFreq,timebase)
+
+    phi=0;
+    c=cos(phi*timebase);
+    s=-sin(phi*timebase);
+    
+	mysignal= signal.*c + nsignal.*s;
 end

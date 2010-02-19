@@ -5,7 +5,7 @@ function [Filtro] = filtroPassaBaixo(fs,fc)
 
     Filtro=1:fc/fs:fc;
     rightLimit=floor(fc/2);
-    for i=1:length(Filtro)
+    for i=1:len
         if (i>rightLimit )
             Filtro(i)=0;
         else

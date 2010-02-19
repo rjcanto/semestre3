@@ -1,0 +1,5 @@
+function [] = SCDQAM()
+    textfile='';
+    imgfile='';
+
+end
