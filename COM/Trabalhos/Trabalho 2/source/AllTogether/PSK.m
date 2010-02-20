@@ -1,4 +1,4 @@
-function [FS,mySignal,t]=PSK(signal,paramA,paramB,fo)
+function [FS,mySignal]=PSK(signal,paramA,paramB,fo)
 	if(nargin == 0)
 		fprintf('É necessário mais argumentos.\n');
 		return;
@@ -17,5 +17,5 @@ function [FS,mySignal,t]=PSK(signal,paramA,paramB,fo)
 			paramB = -paramB;
 		end
 	end
-	[FS,mySignal,t]=codificador(signal,paramA,paramB,fo);
+	[FS,mySignal]=codificador(signal,paramA,paramB,fo);
 end

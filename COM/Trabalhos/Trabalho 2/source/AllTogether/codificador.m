@@ -1,4 +1,4 @@
-function [FS,mySignal,t] = codificador(signal,A,B,Fo)
+function [mySignal,FS] = codificador(signal,A,B,Fo)
 	if(nargin == 0)
 		printf('É necessário mais argumentos.\n');
 		return;
@@ -8,8 +8,12 @@ function [FS,mySignal,t] = codificador(signal,A,B,Fo)
 	end
 	
 	[TB,Amp]=NRZValues();
-	[FS,Xt,nXt,n]=NRZ(signal,Amp,TB,Fo);
-    t=n;
+	[Xt,nXt,FS]=NRZ(signal,Amp,TB,Fo);
+    %construção do array de tempos
+    samplesBit = length(0:1/(FS-1):TB);
+    n = length(Xt)/samplesBit;
+    t = 0:(TB*n)/(samplesBit*n-1):TB*n;
+    
 	x1T = modula(Xt,A,Fo,t);
 	x2T = modula(nXt,B,Fo,t);
 	mySignal=x1T + x2T;

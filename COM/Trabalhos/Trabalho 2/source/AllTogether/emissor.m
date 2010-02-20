@@ -1,11 +1,11 @@
-function [Signal,FS,TB]= emissor(signal,Fo,Mod)
+function [Signal,FS]= emissor(signal,Fo,Mod)
     
     if (strcmpi(Mod,'OOK'))
         %Modelação OOK
-        [FS,Signal,TB]=OOK(signal,5,0,Fo);
+        [Signal,FS]=OOK(signal,5,0,Fo);
     elseif(strcmpi(Mod,'PSK'))
         %Modelação PSK
-        [FS,Signal,TB]=PSK(signal,5,-5,Fo);
+        [Signal,FS]=PSK(signal,5,-5,Fo);
     else
         fprintf('Modulação indicada é ínválida.\n');
         return;

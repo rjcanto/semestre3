@@ -37,8 +37,7 @@ m_sindromas=0;
     for i=1:length(corrigeBits)
         m_sindromas(i,1:7)= mod((corrigeBits(i,1:11)*H'),2);
     end;
-    %m_sindromas = vertcat(zeros(1,7),m_sindromas);
-%    m_sindromas
+    %m_sindromas
 
 %Processamento do sinal de entrada
 %Por cada bloco de 11 bits, verifica se existe erro e se sim, corrige o
@@ -52,7 +51,7 @@ sinal_out=zeros(1,length(sinal)/11*4);
         sindroma = mod(sinal(1,x:x+10)*H',2);
         for i=1:length(m_sindromas)
             if (sindroma == m_sindromas(i,1:7))
-                sinal_out(1,((x-1)/11*4+1):((x-1)/11*4+1)+3) = (mod(sinal(1,x:x+3) + corrigeBits(i,1:4),2));
+                sinal_out(1,(floor(x/11)*4+1):(floor(x/11)*4+1)+3) = (mod(sinal(1,x:x+3) + corrigeBits(i,1:4),2));
                 sinal_p = 1;
                 break;
             end;   
@@ -61,9 +60,9 @@ sinal_out=zeros(1,length(sinal)/11*4);
             %se sinal tem mais do que 3 bits em erro então mantem sinal da
             %entrada na saída e informa utilizador
             sinal_out(1,((x-1)/11*4+1):((x-1)/11*4+1)+3) = sinal(1,x:x+3);
-            fprintf('!!!Erro de transmissão!!!\n');
-            fprintf('Mais de dois bits trocados entre o bit %d e o bit %d.\n',x, x+10);
-            fprintf('Transmissão deverá ser repetida.');
+%             fprintf('!!!Erro de transmissão!!!\n');
+%             fprintf('Mais de dois bits trocados entre o bit %d e o bit %d.\n',x, x+10);
+%             fprintf('Transmissão deverá ser repetida.');
         end;
     end;
 %sinal_out

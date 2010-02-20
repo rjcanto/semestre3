@@ -1,4 +1,4 @@
-function [FS,mySignal,t]= OOK(signal,paramA,paramB,fo)
+function [mySignal,FS]= OOK(signal,paramA,paramB,fo)
 	if(nargin == 0)
 		fprintf('É necessário mais argumentos.\n');
 		return;
@@ -11,5 +11,5 @@ function [FS,mySignal,t]= OOK(signal,paramA,paramB,fo)
 	end
 	paramB=0;	
 	
-	[FS,mySignal,t]=codificador(signal,paramA,paramB,fo);
+	[mySignal,FS]=codificador(signal,paramA,paramB,fo);
 end

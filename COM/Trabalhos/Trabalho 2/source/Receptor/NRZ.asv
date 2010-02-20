@@ -21,7 +21,7 @@ function [RB,myX,mynX,TB]=NRZ(signal,Amp,CarrierFreq)
 	elseif (nargin == 2)
 		fprintf('Assumindo a frequencia da portadora de 100Hz.\n');	
 		CarrierFreq=100;
-	end
+    end
 		
 
 	%Tempo de Bit do Nosso NRZ
@@ -37,23 +37,25 @@ function [RB,myX,mynX,TB]=NRZ(signal,Amp,CarrierFreq)
     end
 
     %Numero de elementos da nossa Base tempo.
-	%n=0:1/(nbrBits*RB-1):1;
-
+    %n=0:1/(nbrBits*RB-1):1;
+    n=0:1/((10000*TB)*nbrBits-1):1;
+    
     %Nosso conjunto que vai conter o sinal de saída
-	myX= 1:RB;
-	mynX= 1:RB;
+	myX= 1:((10000*TB)*nbrBits);
+	mynX= 1:((10000*TB)*nbrBits);
 	
     %Ciclo que vai criar a onda quadrada
-	for i=1:nbrBits
-		for  k=1:RB
+	j = 1;
+    for i=1:nbrBits
+		for  k=1:10000*TB
 			if( signal(i) == 1)
-				myX(k)=Amp;
-				mynX(k)=0;
-				k=k+1;
+				myX(j)=Amp;
+				mynX(j)=0;
+				j=j+1;
 			else
- 				myX(k)=0;
- 				mynX(k)=Amp;
- 				k=k+1;
+ 				myX(j)=0;
+ 				mynX(j)=Amp;
+ 				j=j+1;
             end 
 		end
     end

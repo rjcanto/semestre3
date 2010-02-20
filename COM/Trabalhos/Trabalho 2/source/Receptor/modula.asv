@@ -1,8 +1,11 @@
-function [mysignal]=modula(signal,amplierFactor,RS)
-	%timebase=0:1/(RS-1):1;
-    %aT=cos(2*pi*CarrierFreq*(timebase));
-    aT=Portadora(10000*R);
-    length(signal)
-    length(aT)
-	mysignal= amplierFactor*signal*(aT);
+function [aT]=modula(signal,amplierFactor,CarrierFreq,TB)
+	timebase=0:1/((length(signal)-1)*):1;
+    length (signal)
+    aT=cos(2*pi*CarrierFreq*timebase);
+    length (aT)
+    figure;
+    plot(timebase,aT);
+    
+	mysignal= signal.*(amplierFactor*aT);
+    %plot(timebase,mysignal);
 end

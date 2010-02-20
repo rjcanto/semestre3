@@ -1,10 +1,28 @@
 function [OutSignal]=main(InSignal,Fo,Mod,t,Fc)
-    SNR=0;
+    SNR=20;
     type=t;
 	%InSignal
-    [signal,FS,TB]=emissor(InSignal,Fo,Mod);
+    InSignal=Normaliza(InSignal);
+    
+%      CodedSignal = geraCodigo(InSignal);
+   CodedSignal=InSignal;
+    [signal,FS]=emissor(CodedSignal,Fo,Mod);
+    
+    %construção do array de tempos
+%     TB=0.001;
+%     samplesBit = length(0:1/(FS-1):TB);
+%     n = length(signal)/samplesBit;
+%     t = 0:(TB*n)/(samplesBit*n-1):TB*n;
+%     plot(t,signal);
+     
     [signal]=TX(signal,SNR,type,FS,Fc);
-    OutSignal=receptor(signal,FS,TB,Mod)
+    
+% 
+%       figure;
+%       plot(t,signal);
+     
+    OutSignal=receptor(signal,FS,Mod);
+%     OutSignal=descodificador(OutSignal);
 
-    BER(InSignal,OutSignal)
+   % BER(InSignal,OutSignal)
 end 
