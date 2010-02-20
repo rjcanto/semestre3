@@ -4,11 +4,7 @@
 
 function [Y]=tx2(signal,SNR,FS,Fc)
     signal_F=fftshift(fft(signal));
-    length(signal)
-    length(signal_)
-%     Filtro=filtroPassaBaixo(FS,Fc);
-    [num,den] = fir1(10, FS/Fc,'low' ) ;
-    FilteredOutput = filter(num,den,signal_F); 
-    signal=ifft(FilteredOutput);
+    Filtro=filtroPassaBaixo(length(signal_F),Fc);
+    signal=ifft(signal_F.*Filtro);
 	Y=tx1(signal,SNR);
 end

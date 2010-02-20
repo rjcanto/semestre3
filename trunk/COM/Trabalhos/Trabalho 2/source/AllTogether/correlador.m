@@ -1,10 +1,10 @@
-%
-%Precisa de ser revisto
-%
-function [result]= correlador(Signal,FS,TB,Modulation)
-    bitsLen=FS;    
-    bitsnbr=length(Signal)/FS;
-    t=0:1/(bitsLen-1):1;
+function [result]= correlador(Signal,FS,Modulation)
+    [TB,Amp]=NRZValues();
+    %construção do array de tempos
+    bitsLen = length(0:1/(FS-1):TB);
+    bitsnbr = length(Signal)/bitsLen;
+    t = 0:(TB*bitsnbr)/(bitsLen*bitsnbr-1):TB*bitsnbr; 
+    
     Signal=Signal.*cos(2*pi*10000*TB);
     tmpY=zeros(1,bitsLen);
     result=zeros(1,bitsnbr);
@@ -17,6 +17,6 @@ function [result]= correlador(Signal,FS,TB,Modulation)
             count=count+1;
         end
         Y=sum(tmpY);
-        result(i)=decisor(Y,FS,Modulation);
+        result(i)=decisor(Y,Modulation);
     end
 end

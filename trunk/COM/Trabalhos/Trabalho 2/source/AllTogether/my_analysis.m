@@ -51,6 +51,7 @@ xlabel('Tempo [seg]'); ylabel('Amplitude');
 
 % Espectro.
 subplot(3,1,2); 
+fftshift(abs(fft(x)))
 plot( freq, fftshift(abs(fft(x))) ); 
 grid on; title('Espectro (módulo) '); 
 xlabel('Frequencia [Hz]'); ylabel('Módulo');
