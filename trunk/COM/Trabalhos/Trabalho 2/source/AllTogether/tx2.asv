@@ -3,7 +3,12 @@
 % passa-baixo com frequência de corte programável (função tx2)
 
 function [Y]=tx2(signal,SNR,FS,Fc)
-    signal_F=fftshift(fft(signal));
+    freq = ((0:1:length(signal)-1)*FS/(length(signal)))-FS/2;
+
+    plot(signal);
+    signal_F=fftshift(abs(fft(signal)));
+    figure;
+    plot(signal_F);
     Filtro=filtroPassaBaixo(length(signal_F),Fc);
     signal=ifft(signal_F.*Filtro);
 	Y=tx1(signal,SNR);

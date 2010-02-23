@@ -4,4 +4,6 @@
 %
 function [Y]=tx1(signal,SNR)
     Y=awgn(signal,SNR);
+%     figure;
+%     plot(signal);
 end 

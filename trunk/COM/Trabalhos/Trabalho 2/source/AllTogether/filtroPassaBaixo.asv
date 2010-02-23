@@ -3,6 +3,16 @@
 
 function [Filtro] = filtroPassaBaixo(fs,fc)
 
+primeiro calculas o fichiero de tempos com: freq = ((0 : 1
+           : length(portadora)-1)*100 / ( length(portadora) )) -
+           100/2;
+[17:20:29] Nuno Sousa: em que portadora é o teu sinal em freq ou tempo
+
+           e 100 é a tua FS
+[17:20:29] Nuno Sousa: depois fftshift(abs(fft(portadora)))
+
+
+
     Filtro=1:fc/fs:fc;
     rightLimit=floor(fc/2);
     for i=1:length(Filtro)

@@ -1,7 +1,7 @@
 function [result] = decisor(Signal,Modulation)
     [TB,Amp]=NRZValues();
     if (strcmpi(Modulation,'OOK'))
-		Eb=Amp*Amp*TB/2;
+		Eb=Amp*Amp/2;
             if (Signal > Eb/2)
                 result = 1;
             else
