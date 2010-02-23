@@ -17,4 +17,5 @@ function [mySignal,FS] = codificador(signal,A,B,Fo)
 	x1T = modula(Xt,A,Fo,t);
 	x2T = modula(nXt,B,Fo,t);
 	mySignal=x1T + x2T;
+    %plot(t,mySignal);
 end

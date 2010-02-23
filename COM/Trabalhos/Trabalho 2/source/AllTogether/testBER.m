@@ -1,24 +1,24 @@
 function [OutSignal]=testBER(InSignal)
     Fo=10000;
-    Fc=100000;
-    xSNR=0:0.1:30;
+    Fc=15000;
+    xSNR=-20:0.1:20;
     BER1=zeros(1,length(xSNR));
     BER2=BER1;
     BER3=BER2;
     BER4=BER3;
     i=1;
-        display( 'OOK em Tx1');
-        [signal,FS]=emissor(InSignal,Fo,'ook');
+    display( 'OOK em Tx1');
+    [signal,FS]=emissor(InSignal,Fo,'ook');
     for val=xSNR
         [Xsignal]=TX(signal,val,1,FS,Fc);
         OutSignal=receptor(Xsignal,FS,'ook');
         BER1(i)=BER(InSignal,OutSignal);
         i=i+1;
     end
-    
     LinearRegressionPlot(xSNR,BER1,'OOK em Tx1');
     
     display( 'OOK em Tx2');
+    [signal,FS]=emissor(InSignal,Fo,'ook');
     i=1;
 	for val=xSNR
         [Xsignal]=TX(signal,val,2,FS,Fc);
@@ -31,9 +31,9 @@ function [OutSignal]=testBER(InSignal)
     
     display( 'PSK em Tx1');
     i=1;
-    [signal,FS]=emissor(InSignal,FS,'psk');
-    figure;
-    plot(signal);
+    [signal,FS]=emissor(InSignal,Fo,'psk');
+%    figure;
+%    plot(signal);
     for val=xSNR
         [Xsignal]=TX(signal,val,1,Fo,Fc);
         OutSignal=receptor(Xsignal,FS,'psk');   
@@ -46,7 +46,7 @@ function [OutSignal]=testBER(InSignal)
     display( 'PSK em Tx2');
     i=1;
     for val=xSNR
-        [Xsignal]=TX(signal,val,2,FS,Fc);
+        [Xsignal]=TX(signal,val,2,Fo,Fc);
         OutSignal=receptor(Xsignal,FS,'psk');   
         BER4(i)=BER(InSignal,OutSignal);
         i=i+1;

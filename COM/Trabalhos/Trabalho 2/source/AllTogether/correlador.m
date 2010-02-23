@@ -5,10 +5,10 @@ function [result]= correlador(Signal,FS,Modulation)
     bitsnbr = length(Signal)/bitsLen;
     t = 0:(TB*bitsnbr)/(bitsLen*bitsnbr-1):TB*bitsnbr; 
     
-    Signal=Signal.*cos(2*pi*10000*TB);
+    Signal=Signal.*cos(2*pi*10000*t);
     tmpY=zeros(1,bitsLen);
     result=zeros(1,bitsnbr);
-    
+    %plot(t,Signal);
     for i=1:bitsnbr
         count=1;
         while (count <= bitsLen )
@@ -16,6 +16,8 @@ function [result]= correlador(Signal,FS,Modulation)
             tmpY(count)=Signal(idx);
             count=count+1;
         end
+         %c = sum(signal.*(cos(2*pi*2000*tx)));
+         
         Y=sum(tmpY);
         result(i)=decisor(Y,Modulation);
     end
