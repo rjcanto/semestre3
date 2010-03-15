@@ -162,11 +162,12 @@ int main(int argc, char** argv){
 	
 	printf("O mapa de exames e' %svalido.\n", res ? "" : "in");
 	
-	courses->vptr->dtor(courses);
+	
 	exams->vptr->dtor(exams);
+	courses->vptr->dtor(courses);
 	val1->vptr->dtor(val1);
 	val2->vptr->dtor(val2);
 
-	return 0;
+	return 0;	
 }
 
