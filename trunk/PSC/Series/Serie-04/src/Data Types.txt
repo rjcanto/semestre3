@@ -1,0 +1,74 @@
+myLib.h
+#define SUCCESS 0;
+#define UNSUCCESS 1;
+enum boolean {false,true};
+typedef unsigned char byte;
+typedef char* String;
+
+DataLoader.h
+typedef struct DataLoader dldr;
+typedef void* ItemType;
+typedef struct ItemTypeArray arrayItem;
+
+struct ItemTypeArray{
+	arrayMethods *vptr;
+	ItemType* array;
+	int size;
+};
+typedef struct ItemTypeArray_vtable{
+	void		(*dtor)			(arrayItem* this);
+} arrayMethods;
+
+struct DataLoader{
+	dldrMethods *vptr;
+	FILE* input;
+};
+typedef struct DataLoader_vtable{
+	void 		(*dtor) 		(dldr *this);
+	ItemType*	(*newArray)		(int numEntries);
+	ItemType	(*newInstance)	(String* elems);
+	arrayItem*	(*loadFrom)		(dldr *this, arrayItem* arr, String filename);
+	arrayItem*	(*build)		(dldr *this, arrayItem* arr, int n);
+} dldrMethods;
+
+ProgramCourse.h
+
+typedef struct ProgramCourse prgcourse;
+struct ProgramCourse{
+	prgcourseMethods *vptr;
+	String 	acronym;
+	char 	type;
+	int 	terms;
+};
+typedef struct ProgramCourse_vtable{
+	void 		(*dtor) 			(prgcourse *this);
+	int			(*comparator)		(const void *pc1, const void* pc2);
+	arrayItem*	(*loadFrom)			(String filename);
+	int 		(*indexOf)			(String acr, arrayItem* courses);
+} prgcourseMethods;
+
+Exam.h
+typedef struct Exam exam;
+typedef struct ExamLoader examldr;
+
+struct Exam{
+	examMethods* 	vptr;
+	prgcourse* 		course;
+	int 			date1;
+	int 			date2;
+};
+typedef struct Exam_vtable{
+	void 		(*dtor) 			(exam *this);
+	int			(*comparator)		(const void *e1, const void* e2);
+	arrayItem*	(*loadFrom)			(String filename, arrayItem* courses);
+	int 		(*indexOf)			(String acr, arrayItem* examsArr);
+} examMethods;
+
+struct ExamLoader{
+	examLoaderMethods* 	vptr;
+	dldr* 				loader;
+	arrayItem* 			coursesArray;
+};
+typedef struct ExamLoader_vtable{
+	void	(*dtor)				(examldr * this);
+} examLoaderMethods;

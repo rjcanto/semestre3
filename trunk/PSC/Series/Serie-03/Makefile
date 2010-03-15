@@ -15,7 +15,6 @@ header.o: header.c imageFormat.h myLib.h
 imageFormat.o: imageFormat.c imageFormat.h myLib.h
 		gcc -g -Wall -pedantic -Iinclude -c imageFormat.c 
 
-
 zpipe: z-Library.o
 		gcc -Iinclude -o zpipe z-Library.o libz.a
 		
@@ -25,4 +24,5 @@ z-Library.o: z-Library.c z-Library.h myLib.h zlib.h
 filtersPNG.o: filtersPNG.c myLib.h imageFormat.h
 	gcc -g -Wall -pedantic -Iinclude -c filtersPNG.c
 
-
+clean:
+	rm -f ExamValidator *.so *.o *~

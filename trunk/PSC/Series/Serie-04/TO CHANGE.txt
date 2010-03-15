@@ -1,0 +1,20 @@
+dataloader
+retirar metodos, ficando so o newInstance, e o newArray
+
+criar tipo derivado de dataloader para PC e Exam
+ao ser criado vai alimentar a vtable
+build ->private
+
+criação instancias: para possibilitar a alocação estatica ou automaticamente
+metodos ctor(init) que faz a inicialização dos dados e create (new) que faz a alocação do espaço do memória
+
+dtor - limpa o conteudo da variavel 
+delete - "limpa a variavel da memoria"
+
+line e elems (alocar directamente as variaveis sem usar malloc)
+
+xstrtrim ->retirar o mover da string para o inicio
+
+examloader (tem uma instancia de loader e nao um ponteiro para)
+
+!!!DLCLOSE!!!
